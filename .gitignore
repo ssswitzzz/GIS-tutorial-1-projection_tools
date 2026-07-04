@@ -1,0 +1,29 @@
+# Specific excludes requested by user
+/#1 project/
+/#1视频配音/
+/bgms/
+*.srt
+*.txt
+*.docx
+
+# Python virtual environment and cache
+.venv/
+__pycache__/
+*.pyc
+
+# Local agents and config
+.agents/
+/media/
+/PixPin_*.png
+/map projections.png
+
+# Remotion project build and dependencies
+/remotion-video/node_modules/
+/remotion-video/out/
+/remotion-video/build/
+/remotion-video/.env
+/remotion-video/tmp-*.png
+
+# OS junk
+.DS_Store
+Thumbs.db
