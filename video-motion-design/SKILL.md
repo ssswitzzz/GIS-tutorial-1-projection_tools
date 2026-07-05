@@ -39,7 +39,9 @@ When the user gives narration, split it into 4-8 beats for short segments and mo
 - The transition into the next beat.
 - Timing in seconds or frames.
 
-Keep on-screen text shorter than narration. Use large text only for key hooks, thesis lines, contrast pairs, and final takeaways. Put supporting explanations into smaller captions, cards, diagrams, or motion labels.
+**Timing & Subtitle Alignment (动画与字幕时间的绝对对应)**:
+- **Strict Frame Alignment**: Every visual event, transition, stamp hit, machine error, or state transition MUST be strictly synchronized with the timestamps in the subtitle (SRT) file. Avoid visual changes that feel out of sync with the narration.
+- **Concise Narrative Banners**: Do not use the spoken narration text directly as the primary scene titles or overlay banners. Summarize the concept concisely into clean, professional title cards/headers (e.g. "什么是投影转换？" or "第一步：用 Define Projection 贴标签" rather than copying the spoken explanation word-for-word). Keep on-screen text shorter than narration. Use large text only for key hooks, thesis lines, contrast pairs, and final takeaways. Put supporting explanations into smaller captions, cards, diagrams, or motion labels.
 
 ## Visual Style Defaults
 
@@ -63,10 +65,19 @@ Typography defaults:
 - Keep composition metadata in `Root.tsx`: `id`, `durationInFrames`, `fps`, `width`, `height`.
 - If changing fps while preserving duration, scale `durationInFrames` proportionally.
 - Use `useCurrentFrame`, `useVideoConfig`, `interpolate`, `spring`, and `Easing` for deterministic animation.
-- Avoid CSS animations for rendered video unless they are already stable in the project; Remotion may warn about non-frame-pure animation.
+- **No CSS Transitions for Frame State (禁止在帧控变量上使用 CSS 过渡)**: Avoid using CSS `transition: "transform 0.2s"` or `transition: "opacity 0.3s"` on elements that change with frame-level state variables. These time-based CSS transitions depend on real-time browser playback and will render incorrectly or stutter when rendering frame-by-frame. Always use deterministic `interpolate()` or `spring()` to calculate styles directly.
+- **Symmetric Cross-Fade & Scale Morphing (无缝渐变切换与尺寸缩放同步)**: When transitioning between images/avatars/icons that have different ideal sizes (e.g., swapping character expression states):
+  - Do not apply a shared scale factor to a common parent container during transitions; this forces the incoming element to start at the wrong size.
+  - Instead, apply individual scales and opacities to each asset separately.
+  - Establish a cross-fade window (typically 10-20 frames). During this window:
+    - The outgoing asset should smoothly fade out (`opacity` from `1` to `0`) and shrink (from `normalScale` down to `normalScale * 0.7`).
+    - The incoming asset should smoothly fade in (`opacity` from `0` to `1`) and grow (from `normalScale * 0.7` up to `normalScale`).
+    - This ensures a beautiful morphing transition where elements smoothly expand/contract into place without abrupt popping.
+- **Preventing Unexpected Text Wrapping (防止文本意外折行)**: For UI labels, card headers, status screens, slots, button labels, and path strings, always include `whiteSpace: "nowrap"` in CSS. Unexpected line-wrapping (e.g. single characters or slashes wrapping to the next line) degrades the professional look of the video.
 - Use `staticFile()` and `delayRender()` / `continueRender()` for Lottie or fetched local assets.
 - Prefer fixed dimensions, aspect ratios, and constrained text boxes to prevent layout shifts.
 - Build reusable small components for repeated cards, labels, diagrams, lower thirds, title cards, and Lottie players.
+- **Proportional Asset Scaling in Transitions**: When cross-fading or transitioning between images/assets (e.g. character avatars) that have different base scales, make their transition/shrink scales proportional to their respective base sizes rather than using hardcoded absolute values (e.g., if target shrink size is 70%, calculate `baseScale * 0.7` rather than using `0.7` for both). This ensures the zoom/easing looks symmetric, balanced, and silky smooth.
 
 ## Render And Preview
 
@@ -102,3 +113,16 @@ Before finishing, verify:
 - The palette is not one-note and does not default to generic dark tech styling.
 - Render commands are correct for Windows PowerShell; use `npm.cmd` when PowerShell blocks `npm.ps1`.
 - Any warnings are explained, especially if they come from unrelated existing files.
+
+## Project & Version Control Hygiene
+
+When working on video production codebases (which often mix Remotion, Python, Manim, voiceovers, and media assets):
+- **Configure `.gitignore` early**: Ensure a root-level `.gitignore` is created to explicitly exclude heavy media, raw recording assets, and documents, keeping only source code and essential assets in Git. Ignore:
+  - Raw/Final voiceover files and directories (e.g., `#1 project/`, `#1视频配音/`).
+  - Audio and background music directories (e.g., `bgms/`).
+  - Subtitle files (e.g., `*.srt`).
+  - Scripts and narrative documents (e.g., `*.txt`, `*.docx`, etc.).
+  - Python virtual environments and caches (e.g., `.venv/`, `__pycache__/`).
+  - Rendered video outputs (e.g., `/out/`, `/build/`, `/media/` output folders).
+  - Unneeded screenshot files (e.g., `PixPin_*.png`, etc.).
+- **Remove Nested `.git` Directories**: If a Remotion template is cloned or initialized inside a parent Git repository, delete the subfolder's `.git/` directory so the outer Git repository can track all video code seamlessly as one repository instead of hitting submodule conflicts.
