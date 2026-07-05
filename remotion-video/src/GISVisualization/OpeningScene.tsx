@@ -508,7 +508,14 @@ export const OpeningScene: React.FC = () => {
                   </div>
                   <div style={{fontFamily: SERIF_STACK, fontSize: 28, fontWeight: 700, color: "#7c5a3b", marginTop: 4, display: "flex", alignItems: "center", gap: 8}}>
                     <span>纠结中... </span>
-                    <span className="animate-bounce">❓</span>
+                    <span
+                      style={{
+                        display: "inline-block",
+                        transform: `translateY(${Math.sin(frame * 0.25) * 6}px)`,
+                      }}
+                    >
+                      ❓
+                    </span>
                   </div>
                 </div>
               )}
@@ -556,10 +563,9 @@ export const OpeningScene: React.FC = () => {
                 style={{
                   position: "absolute",
                   left: 360 + 23 + cursorPath,
-                  top: 190,
+                  top: 190 + Math.sin(frame * 0.25) * 8,
                   zIndex: 30,
                 }}
-                className="animate-bounce"
               >
                 <div
                   style={{
@@ -811,7 +817,15 @@ export const OpeningScene: React.FC = () => {
                 pointerEvents: questionProgress > 0.5 ? "auto" : "none",
               }}
             >
-              <div style={{fontSize: 72, filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.15))"}} className="animate-bounce">❓</div>
+              <div
+                style={{
+                  fontSize: 72,
+                  filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.15))",
+                  transform: `translateY(${Math.sin(frame * 0.25) * 12}px)`,
+                }}
+              >
+                ❓
+              </div>
               <div style={{fontSize: 32, fontWeight: 700, color: "#8f4e3e", marginTop: 16}}>
                 为什么直接投影行不通？
               </div>
