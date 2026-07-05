@@ -4,10 +4,28 @@ import { GISComparison } from "./GISVisualization/GISComparison";
 import { NullIsland } from "./GISVisualization/NullIsland";
 import { OpeningScene } from "./GISVisualization/OpeningScene";
 import { CurrencyExchangeScene } from "./GISVisualization/CurrencyExchangeScene";
+import { GeoreferencingScene } from "./GISVisualization/GeoreferencingScene";
+import { ProjectRasterScene } from "./GISVisualization/ProjectRasterScene";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="ProjectRasterScene"
+        component={ProjectRasterScene}
+        durationInFrames={7554}
+        fps={60}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="GeoreferencingScene"
+        component={GeoreferencingScene}
+        durationInFrames={2662}
+        fps={60}
+        width={1920}
+        height={1080}
+      />
       <Composition
         id="CurrencyExchangeScene"
         component={CurrencyExchangeScene}

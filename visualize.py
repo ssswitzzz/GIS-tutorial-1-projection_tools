@@ -751,7 +751,6 @@ class ProjectRasterScene(Scene):
         self.play(FadeOut(sweep_line))
         self.wait(2.5)
         
-        # Clear Stage
         self.play(
             FadeOut(target_cells),
             FadeOut(deformed_cells),
@@ -761,3 +760,308 @@ class ProjectRasterScene(Scene):
             FadeOut(title)
         )
         self.wait(1)
+
+
+class ProjectRasterSceneTimed(Scene):
+    def construct(self):
+        self.camera.background_color = COLOR_BG
+        
+        # Title
+        title_text = MarkupText("Project Raster (投影栅格) 核心原理", font_size=22, color=COLOR_TEXT).to_edge(UP, buff=0.4)
+        title_line = Line(LEFT * 5.5, RIGHT * 5.5, color=COLOR_CARD_BORDER, stroke_width=1.5).next_to(title_text, DOWN, buff=0.15)
+        title = VGroup(title_text, title_line)
+        
+        self.play(FadeIn(title))
+        self.wait(0.5)
+        
+        # ================= 1. Raster structure demo (Sub 152-170: 0 - 32.26s) =================
+        part1_title = MarkupText("1. 栅格结构：头文件参数与像元推算", font_size=18, color=COLOR_TEAL).next_to(title_line, DOWN, buff=0.4)
+        self.play(Write(part1_title))
+        
+        # Draw a beautiful 5x5 terrain colorful DEM
+        grid_rows, grid_cols = 5, 5
+        cell_size = 0.55
+        
+        dem_colors = [
+            ["#10B981", "#059669", "#047857"], # Green (low valleys)
+            ["#84CC16", "#65A30D", "#4D7C0F"], # Lime (lowlands)
+            ["#EAB308", "#CA8A04", "#A16207"], # Yellow (plateau)
+            ["#F97316", "#EA580C", "#C2410C"], # Orange (high hills)
+            ["#EF4444", "#DC2626", "#B91C1C"], # Red (peaks)
+        ]
+        
+        heights = [
+            [0, 0, 1, 2, 2],
+            [0, 1, 2, 3, 3],
+            [1, 2, 3, 4, 4],
+            [2, 3, 4, 4, 3],
+            [2, 2, 3, 3, 2]
+        ]
+        
+        cells = VGroup()
+        for r in range(grid_rows):
+            for c in range(grid_cols):
+                h = heights[r][c]
+                f_color = dem_colors[h][(r + c) % len(dem_colors[h])]
+                cell = Square(
+                    side_length=cell_size,
+                    stroke_color=COLOR_CARD_BORDER,
+                    stroke_width=1,
+                    fill_color=f_color,
+                    fill_opacity=0.8
+                )
+                x_pos = (c - grid_cols/2 + 0.5) * cell_size - 3.5
+                y_pos = (grid_rows/2 - r - 0.5) * cell_size - 0.2
+                cell.move_to([x_pos, y_pos, 0])
+                cells.add(cell)
+        
+        self.play(Create(cells), run_time=1.2)
+        self.wait(0.5)
+        
+        # Highlight Origin Cell (0,0) (top left cell)
+        top_left_cell = cells[0]
+        self.play(
+            top_left_cell.animate.set_fill(COLOR_TEAL, opacity=0.9).set_stroke(COLOR_TEAL, width=2.5),
+            run_time=0.8
+        )
+        self.wait(0.5)
+        
+        # Info Box
+        info_rect = RoundedRectangle(
+            corner_radius=0.1, 
+            height=2.5, 
+            width=4.0, 
+            color=COLOR_CARD_BORDER, 
+            stroke_width=1.5,
+            fill_color=COLOR_CARD_BG, 
+            fill_opacity=0.9
+        ).shift(RIGHT * 1.5 + DOWN * 0.2)
+        info_header = Text("Raster Header 文件头", font="Source Han Serif CN", font_size=11, color=COLOR_TEAL).next_to(info_rect.get_top(), DOWN, buff=0.2)
+        info_content = Text(
+            "Origin: (X0, Y0)\n"
+            "Cell Size: 30m x 30m\n"
+            "Columns: 5\n"
+            "Rows: 5\n"
+            "CRS: WGS84 (DEG)",
+            font="Consolas", font_size=11, color=COLOR_TEXT
+        ).next_to(info_header, DOWN, buff=0.2, aligned_edge=LEFT)
+        info_grp = VGroup(info_rect, info_header, info_content)
+        
+        self.play(FadeIn(info_grp, shift=LEFT), run_time=1.0)
+        self.wait(0.5)
+        
+        # Arrow pointing to top-left cell origin
+        origin_pointer = Arrow(start=info_rect.get_left() + UP * 0.7, end=top_left_cell.get_center(), color=COLOR_TEAL, stroke_width=3)
+        origin_lbl = Text("左上角地理坐标 (X0, Y0)", font="Source Han Serif CN", font_size=10, color=COLOR_TEAL).next_to(origin_pointer, UP, buff=0.1)
+        
+        self.play(GrowArrow(origin_pointer), Write(origin_lbl), run_time=1.2)
+        self.wait(0.5)
+        
+        # Wait remainder of Phase 1 (Target: 32.26s total)
+        # So far: 0.5 (start) + 1.2 (create) + 0.5 + 0.8 (highlight) + 0.5 + 1.0 (info) + 0.5 + 1.2 (arrow) + 0.5 = 6.7s
+        # FadeOut/Clear will take 1.2s.
+        # Remaining wait = 32.26 - 6.7 - 1.2 = 24.36s
+        self.wait(24.36)
+        
+        # Clear Stage 1
+        self.play(FadeOut(info_grp), FadeOut(origin_pointer), FadeOut(origin_lbl), FadeOut(part1_title), run_time=1.2)
+        
+        # ================= 2. Distortion representation (Sub 171-185: 32.26s - 62.26s) =================
+        part2_title = MarkupText("2. 投影转换：网格因地球曲率发生扭曲变形", font_size=18, color=COLOR_BLUE).next_to(title_line, DOWN, buff=0.4)
+        self.play(Write(part2_title), run_time=1.0)
+        self.wait(0.5)
+        
+        # Compute deformation matrix
+        theta = 12 * DEGREES
+        rot_matrix = [[np.cos(theta), -np.sin(theta), 0], [np.sin(theta), np.cos(theta), 0], [0, 0, 1]]
+        shear_matrix = [[1, 0.25, 0], [0, 1, 0], [0, 0, 1]]
+        combined_matrix = np.dot(shear_matrix, rot_matrix)
+        
+        deformed_cells = cells.copy()
+        
+        self.play(
+            deformed_cells.animate.shift(RIGHT * 6.5).set_color(COLOR_RED),
+            run_time=1.5
+        )
+        self.play(
+            deformed_cells.animate.apply_matrix(combined_matrix),
+            run_time=1.2
+        )
+        self.wait(0.5)
+        
+        # Warning alert box for orthographic computer constraints
+        warn_box = RoundedRectangle(
+            corner_radius=0.1, 
+            height=1.8, 
+            width=5.8, 
+            color=COLOR_RED, 
+            stroke_width=1.5,
+            fill_color="#270510", 
+            fill_opacity=0.95
+        ).shift(LEFT * 3.5 + DOWN * 0.2)
+        
+        warn_txt1 = Text("⚠️ 计算机存储限制：", font="Source Han Serif CN", font_size=12, color=COLOR_RED)
+        warn_txt2 = Text("栅格数据在硬盘中必须按【正交行列矩阵】存储", font="Source Han Serif CN", font_size=10, color=COLOR_TEXT)
+        warn_txt3 = Text("计算机无法直接保存倾斜或弯曲的物理像素！", font="Source Han Serif CN", font_size=10, color=COLOR_MUTED)
+        warn_text_grp = VGroup(warn_txt1, warn_txt2, warn_txt3).arrange(DOWN, buff=0.15).move_to(warn_box.get_center())
+        warn_grp = VGroup(warn_box, warn_text_grp)
+        
+        red_x = Cross(deformed_cells, stroke_color=COLOR_RED, stroke_width=5)
+        
+        self.play(FadeIn(warn_grp, shift=UP), Create(red_x), run_time=1.2)
+        
+        # Wait remainder of Phase 2 (Target: 30.0s total)
+        # So far: 1.0 (title) + 0.5 + 1.5 (shift) + 1.2 (matrix) + 0.5 + 1.2 (warn) = 5.9s
+        # FadeOut/Clear will take 1.2s.
+        # Remaining wait = 30.0 - 5.9 - 1.2 = 22.9s
+        self.wait(22.9)
+        
+        self.play(FadeOut(warn_grp), FadeOut(red_x), FadeOut(part2_title), run_time=1.2)
+        
+        # ================= 3. Resampling solution (Sub 186-194: 62.26s - 73.30s) =================
+        part3_title = MarkupText("3. 解决方案：重采样 (Resampling) 与反向插值", font_size=18, color=COLOR_GREEN).next_to(title_line, DOWN, buff=0.4)
+        self.play(Write(part3_title), run_time=1.0)
+        self.wait(0.5)
+        
+        # Re-color the distorted grid as source
+        self.play(deformed_cells.animate.set_opacity(0.85), run_time=1.0)
+        
+        # Build target grid (Clean, flat, axis-aligned target cells)
+        target_cells = VGroup()
+        for r in range(grid_rows):
+            for c in range(grid_cols):
+                cell = Square(
+                    side_length=cell_size, 
+                    stroke_color=COLOR_BLUE, 
+                    stroke_width=1, 
+                    fill_color=COLOR_CARD_BG, 
+                    fill_opacity=0.1
+                )
+                x_pos = (c - grid_cols/2 + 0.5) * cell_size - 3.5
+                y_pos = (grid_rows/2 - r - 0.5) * cell_size - 0.2
+                cell.move_to([x_pos, y_pos, 0])
+                target_cells.add(cell)
+        
+        lbl_old = Text("旧坐标系 A (变形的原始图像)", font="Source Han Serif CN", font_size=10, color=COLOR_MUTED).next_to(deformed_cells, UP, buff=0.2)
+        lbl_new = Text("新坐标系 B (创建的新空白网格)", font="Source Han Serif CN", font_size=10, color=COLOR_BLUE).next_to(target_cells, UP, buff=0.2)
+        
+        self.play(Create(target_cells), Write(lbl_old), Write(lbl_new), run_time=1.5)
+        
+        # Wait remainder of Phase 3 (Target: 11.04s total)
+        # So far: 1.0 (title) + 0.5 + 1.0 (recolor) + 1.5 (create) = 4.0s
+        # Remaining wait = 11.04 - 4.0 = 7.04s
+        self.wait(7.04)
+        
+        # ================= 4. Inverse mapping & Interpolation (Sub 195-204: 73.30s - 121.40s) =================
+        # Single pixel demo: cell (2,2) -> index 12
+        demo_idx = 12
+        demo_cell = target_cells[demo_idx]
+        demo_center = Dot(demo_cell.get_center(), color=COLOR_BLUE, radius=0.06)
+        
+        self.play(
+            demo_cell.animate.set_stroke(COLOR_BLUE, width=3).set_fill(COLOR_CARD_BG, opacity=0.4),
+            Create(demo_center),
+            run_time=1.2
+        )
+        self.wait(0.5)
+        
+        # Inverse mapping: point coordinates mapped back to distorted grid
+        deformed_center_pos = deformed_cells[12].get_center() + UP * 0.12 + RIGHT * 0.08
+        proj_arrow = DoubleArrow(demo_center.get_center(), deformed_center_pos, color=COLOR_ORANGE, stroke_width=2.5)
+        proj_arrow_lbl = Text("反向投影算回老坐标系", font="Source Han Serif CN", font_size=9, color=COLOR_ORANGE).next_to(proj_arrow, UP, buff=0.02).rotate(proj_arrow.get_angle())
+        
+        self.play(GrowArrow(proj_arrow), Write(proj_arrow_lbl), run_time=1.5)
+        self.wait(0.5)
+        
+        dest_dot = Dot(deformed_center_pos, color=COLOR_YELLOW, radius=0.06)
+        self.play(Create(dest_dot), run_time=0.8)
+        self.wait(0.5)
+        
+        # Query neighboring cells
+        neighbors_idx = [7, 8, 12, 13]
+        neighbor_anims = [deformed_cells[idx].animate.set_stroke(COLOR_YELLOW, width=2.5).set_fill(opacity=0.95) for idx in neighbors_idx]
+        self.play(*neighbor_anims, run_time=1.2)
+        self.wait(0.5)
+        
+        # Interpolation step: flow particles from neighbors to destination
+        ripples = VGroup()
+        for idx in neighbors_idx:
+            particle = Dot(deformed_cells[idx].get_center(), color=COLOR_YELLOW, radius=0.05)
+            ripples.add(particle)
+            
+        self.play(FadeIn(ripples), run_time=0.5)
+        self.play(
+            *[p.animate.move_to(dest_dot.get_center()) for p in ripples],
+            run_time=1.2
+        )
+        self.play(FadeOut(ripples), dest_dot.animate.scale(1.5).set_color(COLOR_ORANGE), run_time=0.8)
+        self.wait(0.5)
+        
+        # Send resampled value particle back to target cell
+        fill_color = deformed_cells[12].get_fill_color()
+        self.play(
+            dest_dot.animate.move_to(demo_center.get_center()),
+            FadeOut(proj_arrow),
+            FadeOut(proj_arrow_lbl),
+            run_time=1.2
+        )
+        
+        self.play(
+            demo_cell.animate.set_fill(fill_color, opacity=0.85).set_stroke(COLOR_BLUE, width=1),
+            FadeOut(dest_dot),
+            FadeOut(demo_center),
+            run_time=1.2
+        )
+        self.wait(0.5)
+        
+        # Complete sweep resampling scan
+        sweep_line = Line(
+            target_cells.get_top() + LEFT * 0.15,
+            target_cells.get_bottom() + LEFT * 0.15,
+            color=COLOR_TEAL,
+            stroke_width=3
+        )
+        sweep_line.set_opacity(0.8)
+        
+        self.play(FadeIn(sweep_line), run_time=0.5)
+        
+        col_anims = []
+        for col in range(grid_cols):
+            anims = []
+            for r in range(grid_rows):
+                idx = r * grid_cols + col
+                if idx == demo_idx:
+                    continue
+                def_cell = deformed_cells[idx]
+                target_cell = target_cells[idx]
+                resample_color = def_cell.get_fill_color()
+                anims.append(target_cell.animate.set_fill(resample_color, opacity=0.85).set_stroke(COLOR_BLUE, width=1))
+            col_anims.append(AnimationGroup(*anims, run_time=0.6))
+            
+        self.play(
+            sweep_line.animate.move_to(target_cells.get_right() + RIGHT * 0.15),
+            LaggedStart(*col_anims, lag_ratio=0.8),
+            run_time=6.0,
+            rate_func=rate_functions.linear
+        )
+        self.play(FadeOut(sweep_line), run_time=0.8)
+        
+        # Wait remainder of Phase 4 (Target: 48.10s total)
+        # So far: 1.2 (demo_cell) + 0.5 + 1.5 (arrow) + 0.5 + 0.8 (dest_dot) + 0.5 + 1.2 (neighbors) + 0.5
+        #         + 0.5 (ripples_fade) + 1.2 (ripples_move) + 0.8 (ripples_scale) + 0.5 + 1.2 (dest_back) + 1.2 (demo_fill) + 0.5
+        #         + 0.5 (sweep_in) + 6.0 (sweep_move) + 0.8 (sweep_fade) = 19.9s
+        # Remaining wait = 48.10 - 19.9 = 28.2s
+        self.wait(28.2)
+        
+        # ================= 5. Conclusion & Clear (Sub 205-206: 121.40s - 125.90s) =================
+        self.play(
+            FadeOut(target_cells),
+            FadeOut(deformed_cells),
+            FadeOut(lbl_old),
+            FadeOut(lbl_new),
+            FadeOut(part3_title),
+            FadeOut(title),
+            run_time=1.5
+        )
+        self.wait(3.0)
+

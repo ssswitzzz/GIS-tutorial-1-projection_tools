@@ -245,7 +245,10 @@ export const OpeningScene: React.FC = () => {
     frame,
     [250, 275, 305, 335, 360],
     [-205, -205, 208, 208, -205],
-    clamp
+    {
+      ...clamp,
+      easing: Easing.bezier(0.16, 1, 0.3, 1),
+    }
   );
 
   const clickProgress = spring({frame: frame - 440, fps, config: {damping: 9, stiffness: 180}});
@@ -257,7 +260,8 @@ export const OpeningScene: React.FC = () => {
   );
 
   const s4Progress = spring({frame: frame - 635, fps, config: {damping: 18, stiffness: 80}});
-  const redLineProgress = softStep(frame, 665, 700);
+  const errorProgress = softStep(frame, 655, 680);
+  const questionProgress = softStep(frame, 715, 740);
   const s5Progress = spring({frame: frame - 785, fps, config: {damping: 20, stiffness: 80}});
 
   const s6Progress = spring({frame: frame - 1030, fps, config: {damping: 20, stiffness: 80}});
@@ -427,7 +431,7 @@ export const OpeningScene: React.FC = () => {
                 left: 390,
                 top: 76,
                 right: 72,
-                bottom: 70,
+                bottom: 240,
                 border: "1px solid rgba(46, 68, 58, 0.2)",
                 background:
                   "linear-gradient(rgba(46, 68, 58, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(46, 68, 58, 0.06) 1px, transparent 1px)",
@@ -437,32 +441,34 @@ export const OpeningScene: React.FC = () => {
               <div style={{position: "absolute", top: 22, left: 26, fontFamily: MONO_STACK, fontSize: 14, color: "#8a8b80"}}>
                 MAP VIEW
               </div>
-              <div
-                style={{
-                  position: "absolute",
-                  left: "50%",
-                  top: "52%",
-                  width: 420,
-                  height: 230,
-                  transform: "translate(-50%, -50%)",
-                  border: "2px dashed rgba(73, 93, 83, 0.24)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontFamily: MONO_STACK,
-                  color: "#9a988b",
-                  fontSize: 14,
-                }}
-              >
-                DROP DATA HERE
-              </div>
+              {frame < 195 && (
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    width: 360,
+                    height: 150,
+                    transform: "translate(-50%, -50%)",
+                    border: "2px dashed rgba(73, 93, 83, 0.24)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontFamily: MONO_STACK,
+                    color: "#9a988b",
+                    fontSize: 14,
+                  }}
+                >
+                  DROP DATA HERE
+                </div>
+              )}
 
               {frame >= 195 && frame < 255 && (
                 <div
                   style={{
                     position: "absolute",
                     left: "50%",
-                    top: "52%",
+                    top: "50%",
                     width: 520,
                     padding: "28px 32px",
                     transform: `translate(-50%, -50%) scale(${alertScale})`,
@@ -487,9 +493,9 @@ export const OpeningScene: React.FC = () => {
                   style={{
                     position: "absolute",
                     left: "50%",
-                    top: "46%",
+                    top: "48%",
                     width: 300,
-                    height: 300,
+                    height: 220,
                     transform: "translate(-50%, -50%)",
                     opacity: thinkingOpacity,
                     display: "flex",
@@ -497,10 +503,10 @@ export const OpeningScene: React.FC = () => {
                     alignItems: "center",
                   }}
                 >
-                  <div style={{width: 160, height: 160}}>
+                  <div style={{width: 140, height: 140}}>
                     <LottiePlayer src="Thinking.json" />
                   </div>
-                  <div style={{fontFamily: SERIF_STACK, fontSize: 28, fontWeight: 700, color: "#7c5a3b", marginTop: 8, display: "flex", alignItems: "center", gap: 8}}>
+                  <div style={{fontFamily: SERIF_STACK, fontSize: 28, fontWeight: 700, color: "#7c5a3b", marginTop: 4, display: "flex", alignItems: "center", gap: 8}}>
                     <span>纠结中... </span>
                     <span className="animate-bounce">❓</span>
                   </div>
@@ -536,8 +542,8 @@ export const OpeningScene: React.FC = () => {
             <div
               style={{
                 position: "absolute",
-                left: 960,
-                top: 728,
+                left: 1119,
+                top: 700,
                 opacity: interpolate(decisionProgress, [0, 1], [0, 1]),
                 transform: `translate(-50%, ${interpolate(decisionProgress, [0, 1], [42, 0])}px)`,
               }}
@@ -550,15 +556,20 @@ export const OpeningScene: React.FC = () => {
                 style={{
                   position: "absolute",
                   left: 360 + 23 + cursorPath,
-                  top: 100,
-                  fontSize: 54,
-                  transform: "translate(-50%, -50%)",
-                  filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.25))",
+                  top: 190,
                   zIndex: 30,
                 }}
                 className="animate-bounce"
               >
-                👆
+                <div
+                  style={{
+                    fontSize: 54,
+                    transform: "translate(-50%, -50%)",
+                    filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.25))",
+                  }}
+                >
+                  👆
+                </div>
               </div>
             </div>
           )}
@@ -645,9 +656,6 @@ export const OpeningScene: React.FC = () => {
               transform: `translateY(${interpolate(s4Progress, [0, 1], [62, 0])}px)`,
             }}
           >
-            <div style={{fontFamily: MONO_STACK, fontSize: 15, color: "#9b5a42", marginBottom: 26}}>
-              BUT WHY NOT PROJECT?
-            </div>
             <div style={{fontSize: 72, lineHeight: 1.12, fontWeight: 700}}>
               但如果我问你：
               <br />
@@ -664,59 +672,153 @@ export const OpeningScene: React.FC = () => {
               top: 238,
               width: 760,
               height: 520,
-              background: "rgba(255, 252, 246, 0.86)",
+              background: "rgba(255, 253, 249, 0.92)",
               border: "1px solid rgba(143, 78, 62, 0.22)",
               boxShadow: "0 34px 90px rgba(84, 59, 46, 0.14)",
-              padding: "48px 54px",
-              boxSizing: "border-box",
+              borderRadius: 8,
+              overflow: "hidden",
               transform: `translateX(${interpolate(s4Progress, [0, 1], [76, 0])}px)`,
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            <div style={{fontFamily: MONO_STACK, fontSize: 14, color: "#847b71", marginBottom: 36}}>
-              Projection needs a known source CRS.
-            </div>
-            <div style={{display: "grid", gridTemplateColumns: "1fr 150px 1fr", gap: 20, alignItems: "center"}}>
-              <div style={{border: "1px solid rgba(143, 78, 62, 0.22)", padding: 26, minHeight: 148}}>
-                <div style={{fontFamily: MONO_STACK, color: "#8f4e3e", fontSize: 13}}>SOURCE CRS</div>
-                <div style={{fontSize: 45, marginTop: 20, color: "#8f4e3e"}}>空值</div>
-              </div>
-              <div style={{textAlign: "center", fontFamily: MONO_STACK, color: "#716a62", fontSize: 14}}>
-                formula
-                <div style={{height: 1, background: "#afa28f", margin: "18px 0"}} />
-                transform
-              </div>
-              <div style={{border: "1px solid rgba(49, 95, 109, 0.18)", padding: 26, minHeight: 148, opacity: 0.62}}>
-                <div style={{fontFamily: MONO_STACK, color: "#315f6d", fontSize: 13}}>TARGET CRS</div>
-                <div style={{fontSize: 45, marginTop: 20, color: "#315f6d"}}>目标</div>
-              </div>
-            </div>
+            {/* Window Header */}
             <div
               style={{
-                marginTop: 44,
-                fontSize: 29,
-                lineHeight: 1.55,
-                color: "#3b332d",
+                background: "rgba(143, 78, 62, 0.08)",
+                borderBottom: "1px solid rgba(143, 78, 62, 0.15)",
+                padding: "16px 24px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
-              “投影”是数学转换。连源坐标系都不知道，
-              公式就缺了最关键的输入。
+              <span style={{fontFamily: SERIF_STACK, fontSize: 20, fontWeight: 700, color: "#8f4e3e"}}>
+                工具运行尝试：投影 (Project)
+              </span>
+              <span style={{color: "#8f4e3e", fontSize: 18}}>✕</span>
             </div>
-            <svg
-              width="760"
-              height="520"
-              viewBox="0 0 760 520"
-              style={{position: "absolute", inset: 0, pointerEvents: "none"}}
+
+            {/* Dialog Content */}
+            <div style={{padding: "30px 36px", flex: 1, display: "flex", flexDirection: "column", gap: 18}}>
+              {/* Input 1 */}
+              <div>
+                <div style={{fontFamily: MONO_STACK, fontSize: 13, color: "#7a766c", marginBottom: 6}}>输入数据集或要素类</div>
+                <div 
+                  style={{
+                    border: "1px solid #d1d5db", 
+                    borderRadius: 4, 
+                    background: "rgba(255, 255, 255, 0.6)", 
+                    padding: "12px 16px",
+                    fontFamily: MONO_STACK,
+                    fontSize: 15,
+                    color: "#29342f",
+                  }}
+                >
+                  unknown_crs.shp
+                </div>
+              </div>
+
+              {/* Input 2 */}
+              <div>
+                <div style={{fontFamily: MONO_STACK, fontSize: 13, color: "#7a766c", marginBottom: 6}}>输入坐标系 (自动读取)</div>
+                <div 
+                  style={{
+                    border: "1px dashed #ef4444", 
+                    borderRadius: 4, 
+                    background: "rgba(254, 242, 242, 0.8)", 
+                    padding: "12px 16px",
+                    fontFamily: MONO_STACK,
+                    fontSize: 15,
+                    color: "#ef4444",
+                    fontWeight: 700,
+                  }}
+                >
+                  ⚠️ 未知坐标系 (Unknown)
+                </div>
+              </div>
+
+              {/* Input 3 */}
+              <div>
+                <div style={{fontFamily: MONO_STACK, fontSize: 13, color: "#7a766c", marginBottom: 6}}>输出坐标系 (目标)</div>
+                <div 
+                  style={{
+                    border: "1px solid #d1d5db", 
+                    borderRadius: 4, 
+                    background: "rgba(255, 255, 255, 0.6)", 
+                    padding: "12px 16px",
+                    fontFamily: MONO_STACK,
+                    fontSize: 15,
+                    color: "#29342f",
+                  }}
+                >
+                  CGCS2000 三度带中央经线 120E
+                </div>
+              </div>
+            </div>
+
+            {/* Error Overlay / Status Footer */}
+            <div
+              style={{
+                background: "#fef2f2",
+                borderTop: "1px solid #fee2e2",
+                padding: "20px 36px",
+                display: "flex",
+                alignItems: "center",
+                gap: 16,
+                transform: `translateY(${interpolate(errorProgress, [0, 1], [100, 0], clamp)}%)`,
+                opacity: interpolate(errorProgress, [0, 1], [0, 1], clamp),
+              }}
             >
-              <path
-                d="M96 82 L664 438"
-                stroke="#8f4e3e"
-                strokeWidth="11"
-                strokeLinecap="round"
-                strokeDasharray="680"
-                strokeDashoffset={680 - redLineProgress * 680}
-                opacity="0.7"
-              />
-            </svg>
+              <div 
+                style={{
+                  background: "#ef4444",
+                  color: "white",
+                  width: 32,
+                  height: 32,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 16,
+                  fontWeight: 900,
+                  flexShrink: 0,
+                }}
+              >
+                ✕
+              </div>
+              <div style={{display: "flex", flexDirection: "column"}}>
+                <div style={{fontFamily: MONO_STACK, fontSize: 15, fontWeight: 700, color: "#991b1b"}}>
+                  运行错误: 无法执行该工具。
+                </div>
+                <div style={{fontFamily: MONO_STACK, fontSize: 13, color: "#b91c1c", marginTop: 2}}>
+                  输入坐标系缺失，无法进行投影公式计算。
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Overlay Question Mark (shown if error is active) */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "rgba(255, 253, 249, 0.95)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: questionProgress,
+                pointerEvents: questionProgress > 0.5 ? "auto" : "none",
+              }}
+            >
+              <div style={{fontSize: 72, filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.15))"}} className="animate-bounce">❓</div>
+              <div style={{fontSize: 32, fontWeight: 700, color: "#8f4e3e", marginTop: 16}}>
+                为什么直接投影行不通？
+              </div>
+              <div style={{fontFamily: MONO_STACK, fontSize: 16, color: "#7a766c", marginTop: 8}}>
+                它到底缺了什么关键要素？
+              </div>
+            </div>
           </div>
         </AbsoluteFill>
       )}
@@ -732,7 +834,6 @@ export const OpeningScene: React.FC = () => {
               transform: `translateY(${interpolate(s5Progress, [0, 1], [62, 0])}px)`,
             }}
           >
-            <div style={{fontFamily: MONO_STACK, fontSize: 15, color: "#a77748", marginBottom: 26}}>PERSONAL NOTE</div>
             <div style={{fontSize: 78, lineHeight: 1.15, fontWeight: 700}}>
               说实话，
               <br />
@@ -741,21 +842,22 @@ export const OpeningScene: React.FC = () => {
               <span style={{color: "#8f4e3e"}}>也完全懵了... 🤯</span>
             </div>
             <div style={{fontSize: 28, color: "#5f5e56", lineHeight: 1.55, marginTop: 32}}>
-              备考 GIS 大赛前，被这道题直接问死。
+              备考 GIS 大赛前，我已经完全忘记。
             </div>
           </div>
 
           <div
             style={{
               position: "absolute",
-              right: 190,
-              top: 215,
-              width: 620,
-              height: 540,
-              background: "rgba(255, 248, 248, 0.94)",
-              border: "2px dashed rgba(211, 47, 47, 0.35)",
-              boxShadow: "0 32px 90px rgba(128, 40, 40, 0.15)",
-              padding: 44,
+              right: 150,
+              top: 238,
+              width: 760,
+              height: 520,
+              background: "#1f3227",
+              border: "12px solid #5c3f25",
+              borderRadius: 8,
+              boxShadow: "0 34px 90px rgba(27, 44, 35, 0.25), inset 0 0 40px rgba(0,0,0,0.6)",
+              padding: "36px 40px",
               boxSizing: "border-box",
               transform: `scale(${interpolate(s5Progress, [0, 1], [0.85, 1])})`,
               display: "flex",
@@ -763,55 +865,128 @@ export const OpeningScene: React.FC = () => {
               justifyContent: "space-between",
             }}
           >
-            {/* Exam Header */}
-            <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-              <span style={{fontFamily: MONO_STACK, fontSize: 13, color: "#b71c1c", fontWeight: 700}}>
-                📝 GIS大赛模拟面试
-              </span>
-              <span style={{fontFamily: MONO_STACK, fontSize: 16, color: "#d32f2f", fontWeight: 900}}>
-                得分: 0 / 100 😭
-              </span>
+            {/* Blackboard Header */}
+            <div style={{color: "rgba(255,255,255,0.7)", fontFamily: SERIF_STACK, fontSize: 20, borderBottom: "1px dashed rgba(255,255,255,0.2)", paddingBottom: 10}}>
+              📝 GIS 大赛模拟面试
             </div>
 
-            {/* Exam Content */}
-            <div style={{display: "flex", flexDirection: "column", gap: 14, margin: "24px 0"}}>
-              <div style={{background: "rgba(0,0,0,0.03)", padding: 16, borderLeft: "4px solid #7d7d7d"}}>
-                <div style={{fontSize: 14, color: "#555"}}>提问:</div>
-                <div style={{fontSize: 18, fontWeight: 700, color: "#222", marginTop: 4}}>
-                  “缺失坐标系的数据，为什么不能直接用【投影】工具？”
+            {/* Main Area */}
+            <div style={{display: "flex", flex: 1, marginTop: 20, position: "relative"}}>
+              {/* Question Chalk Text */}
+              <div style={{flex: 1, color: "#fffaf0", display: "flex", flexDirection: "column", gap: 14, textShadow: "0 0 4px rgba(255,255,255,0.4)"}}>
+                <div style={{fontSize: 22, color: "#facc15", fontWeight: 700}}>【提问】</div>
+                <div style={{fontSize: 34, lineHeight: 1.35, fontWeight: 700, fontFamily: SERIF_STACK}}>
+                  缺失坐标系的数据，
+                  <br />
+                  为什么不能
+                  <br />
+                  直接用【投影】？
                 </div>
               </div>
 
-              <div style={{background: "rgba(211, 47, 47, 0.04)", padding: 16, borderLeft: "4px solid #d32f2f"}}>
-                <div style={{fontSize: 14, color: "#d32f2f"}}>我的回答 (大三时期):</div>
-                <div style={{fontSize: 18, color: "#b71c1c", fontStyle: "italic", marginTop: 4}}>
-                  “呃... 拖进工具箱直接运行不就行了吗...？”
-                </div>
-              </div>
-            </div>
-
-            {/* Giant Stamp & Lottie */}
-            <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "1px solid rgba(0,0,0,0.06)", paddingTop: 20}}>
-              <div style={{width: 90, height: 90}}>
-                <LottiePlayer src="Thinking.json" />
-              </div>
+              {/* Nervous Boy Image */}
               <div 
                 style={{
-                  border: "4px double #d32f2f",
-                  color: "#d32f2f",
-                  fontFamily: SERIF_STACK,
-                  fontSize: 26,
-                  fontWeight: 900,
-                  padding: "6px 20px",
-                  borderRadius: 6,
-                  transform: "rotate(-12deg) scale(1.1)",
-                  boxShadow: "0 0 10px rgba(211,47,47,0.1)",
+                  width: 260,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  position: "relative",
+                  transform: `translateX(${interpolate(s5Progress, [0, 1], [50, 0])}px)`,
                 }}
-                className="animate-pulse"
               >
-                完全懵圈 🤦‍♂️
+                <img 
+                  src={staticFile("school_kokuban_happyou_tenkousei_kinchou_boy.png")}
+                  style={{
+                    height: 280,
+                    objectFit: "contain",
+                    filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.3))",
+                    transform: `translateX(${Math.sin(frame * 1.5) * 2}px)`, 
+                  }}
+                />
+
+                {/* Speech Bubble */}
+                {frame >= 810 && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: 270,
+                      right: 110,
+                      width: 220,
+                      background: "#fff",
+                      border: "2px solid #222",
+                      borderRadius: 12,
+                      padding: "10px 14px",
+                      fontSize: 16,
+                      color: "#111",
+                      fontWeight: 700,
+                      boxShadow: "0 6px 12px rgba(0,0,0,0.15)",
+                      transform: `scale(${spring({frame: frame - 810, fps, config: {damping: 12, stiffness: 120}})})`,
+                      transformOrigin: "bottom right",
+                    }}
+                  >
+                    “呃……直接运行
+                    <br />
+                    不就行了吗……？”
+                    <div style={{
+                      position: "absolute",
+                      bottom: -10,
+                      right: 30,
+                      width: 0,
+                      height: 0,
+                      borderWidth: "10px 10px 0 0",
+                      borderColor: "#fff transparent transparent transparent",
+                      borderStyle: "solid",
+                    }} />
+                    <div style={{
+                      position: "absolute",
+                      bottom: -13,
+                      right: 29,
+                      width: 0,
+                      height: 0,
+                      borderWidth: "11px 11px 0 0",
+                      borderColor: "#222 transparent transparent transparent",
+                      borderStyle: "solid",
+                      zIndex: -1,
+                    }} />
+                  </div>
+                )}
               </div>
             </div>
+
+            {/* Giant Stamp Slammed */}
+            {frame >= 845 && (
+              <div
+                style={{
+                  position: "absolute",
+                  left: "30%",
+                  top: "40%",
+                  border: "6px double #ef4444",
+                  color: "#ef4444",
+                  fontFamily: SERIF_STACK,
+                  fontSize: 48,
+                  fontWeight: 900,
+                  padding: "10px 30px",
+                  borderRadius: 12,
+                  background: "rgba(254, 242, 242, 0.95)",
+                  boxShadow: "0 10px 30px rgba(239, 68, 68, 0.4)",
+                  zIndex: 10,
+                  transform: `translate(-50%, -50%) rotate(-15deg) scale(${interpolate(
+                    spring({frame: frame - 845, fps, config: {damping: 10, stiffness: 150}}),
+                    [0, 1],
+                    [3, 1]
+                  )})`,
+                  opacity: interpolate(
+                    spring({frame: frame - 845, fps, config: {damping: 10, stiffness: 150}}),
+                    [0, 1],
+                    [0, 1]
+                  ),
+                }}
+              >
+                得分: 0分 🤦‍♂️
+              </div>
+            )}
           </div>
         </AbsoluteFill>
       )}
