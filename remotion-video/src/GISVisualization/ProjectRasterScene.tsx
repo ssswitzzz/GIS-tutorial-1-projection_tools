@@ -302,6 +302,22 @@ export const ProjectRasterScene: React.FC = () => {
   const qTextY = interpolate(questionSpring, [0, 1], [40, 0], clamp);
   const qTextOpacity = interpolate(questionSpring, [0, 1], [0, 1], clamp);
 
+  // Highlight Springs for Phase 5 cards based on timing windows
+  const h1FadeOut = spring({ frame: frame - 1135, fps, config: { damping: 15, stiffness: 90 } });
+  
+  const h2FadeIn = spring({ frame: frame - 1135, fps, config: { damping: 15, stiffness: 90 } });
+  const h2FadeOut = spring({ frame: frame - 1330, fps, config: { damping: 15, stiffness: 90 } });
+
+  const h3FadeIn = spring({ frame: frame - 1330, fps, config: { damping: 15, stiffness: 90 } });
+  const h3FadeOut = spring({ frame: frame - 1510, fps, config: { damping: 15, stiffness: 90 } });
+
+  const h4FadeIn = spring({ frame: frame - 1510, fps, config: { damping: 15, stiffness: 90 } });
+
+  const h1 = 1 - h1FadeOut;
+  const h2 = h2FadeIn - h2FadeOut;
+  const h3 = h3FadeIn - h3FadeOut;
+  const h4 = h4FadeIn;
+
   // ==================== COLOR DATASETS ====================
   const demColors = [
     ["#3b7a57", "#4c8c68", "#60a37c", "#77ba93"],
@@ -586,15 +602,17 @@ export const ProjectRasterScene: React.FC = () => {
               height: 220,
               background: "rgba(255, 255, 255, 0.75)",
               backdropFilter: "blur(12px)",
-              border: "1.5px solid rgba(239, 68, 68, 0.2)",
+              border: `1.5px solid rgba(239, 68, 68, ${interpolate(h1, [0, 1], [0.1, 0.6])})`,
               borderRadius: 20,
-              boxShadow: "0 10px 25px rgba(239, 68, 68, 0.04)",
+              boxShadow: `0 ${interpolate(h1, [0, 1], [5, 15])}px ${interpolate(h1, [0, 1], [15, 35])}px rgba(239, 68, 68, ${interpolate(h1, [0, 1], [0.02, 0.22])})`,
               padding: 24,
               boxSizing: "border-box",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
+              transform: `scale(${interpolate(h1, [0, 1], [0.94, 1.08])})`,
+              opacity: interpolate(h1, [0, 1], [0.5, 1.0]),
             }}>
               <div style={{ background: "rgba(239, 68, 68, 0.08)", padding: "6px 16px", borderRadius: 14, fontFamily: MONO_STACK, fontSize: 16, color: "#ef4444", fontWeight: "bold", marginBottom: 16 }}>未定义</div>
               <div style={{ fontSize: 28, fontWeight: "bold", color: "#1e293b", fontFamily: SERIF_STACK }}>无坐标系栅格</div>
@@ -614,15 +632,17 @@ export const ProjectRasterScene: React.FC = () => {
               height: 220,
               background: "rgba(255, 255, 255, 0.75)",
               backdropFilter: "blur(12px)",
-              border: "1.5px solid rgba(13, 148, 136, 0.2)",
+              border: `1.5px solid rgba(13, 148, 136, ${interpolate(h2, [0, 1], [0.1, 0.6])})`,
               borderRadius: 20,
-              boxShadow: "0 10px 25px rgba(13, 148, 136, 0.04)",
+              boxShadow: `0 ${interpolate(h2, [0, 1], [5, 15])}px ${interpolate(h2, [0, 1], [15, 35])}px rgba(13, 148, 136, ${interpolate(h2, [0, 1], [0.02, 0.22])})`,
               padding: 24,
               boxSizing: "border-box",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
+              transform: `scale(${interpolate(h2, [0, 1], [0.94, 1.08])})`,
+              opacity: interpolate(h2, [0, 1], [0.5, 1.0]),
             }}>
               <div style={{ background: "rgba(13, 148, 136, 0.08)", padding: "6px 16px", borderRadius: 14, fontFamily: MONO_STACK, fontSize: 16, color: "#0d9488", fontWeight: "bold", marginBottom: 16 }}>步骤 01</div>
               <div style={{ fontSize: 28, fontWeight: "bold", color: "#1e293b", fontFamily: SERIF_STACK }}>定义投影</div>
@@ -642,15 +662,17 @@ export const ProjectRasterScene: React.FC = () => {
               height: 220,
               background: "rgba(255, 255, 255, 0.75)",
               backdropFilter: "blur(12px)",
-              border: "1.5px solid rgba(234, 88, 12, 0.2)",
+              border: `1.5px solid rgba(234, 88, 12, ${interpolate(h3, [0, 1], [0.1, 0.6])})`,
               borderRadius: 20,
-              boxShadow: "0 10px 25px rgba(234, 88, 12, 0.04)",
+              boxShadow: `0 ${interpolate(h3, [0, 1], [5, 15])}px ${interpolate(h3, [0, 1], [15, 35])}px rgba(234, 88, 12, ${interpolate(h3, [0, 1], [0.02, 0.22])})`,
               padding: 24,
               boxSizing: "border-box",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
+              transform: `scale(${interpolate(h3, [0, 1], [0.94, 1.08])})`,
+              opacity: interpolate(h3, [0, 1], [0.5, 1.0]),
             }}>
               <div style={{ background: "rgba(234, 88, 12, 0.08)", padding: "6px 16px", borderRadius: 14, fontFamily: MONO_STACK, fontSize: 16, color: "#ea580c", fontWeight: "bold", marginBottom: 16 }}>步骤 02</div>
               <div style={{ fontSize: 28, fontWeight: "bold", color: "#1e293b", fontFamily: SERIF_STACK }}>投影栅格</div>
@@ -669,16 +691,18 @@ export const ProjectRasterScene: React.FC = () => {
               width: 320,
               height: 220,
               background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
-              border: "1.5px solid rgba(56, 189, 248, 0.3)",
+              border: `1.5px solid rgba(56, 189, 248, ${interpolate(h4, [0, 1], [0.15, 0.75])})`,
               borderRadius: 20,
-              boxShadow: "0 12px 30px rgba(15, 23, 42, 0.25)",
+              boxShadow: `0 ${interpolate(h4, [0, 1], [5, 15])}px ${interpolate(h4, [0, 1], [15, 35])}px rgba(56, 189, 248, ${interpolate(h4, [0, 1], [0.05, 0.3])})`,
               padding: 24,
               boxSizing: "border-box",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              color: "white"
+              color: "white",
+              transform: `scale(${interpolate(h4, [0, 1], [0.94, 1.08])})`,
+              opacity: interpolate(h4, [0, 1], [0.5, 1.0]),
             }}>
               <div style={{ background: "rgba(56, 189, 248, 0.15)", padding: "6px 16px", borderRadius: 14, fontFamily: MONO_STACK, fontSize: 16, color: "#38bdf8", fontWeight: "bold", marginBottom: 16 }}>就绪</div>
               <div style={{ fontSize: 28, fontWeight: "bold", color: "#e2e8f0", fontFamily: SERIF_STACK }}>就绪栅格数据集</div>
