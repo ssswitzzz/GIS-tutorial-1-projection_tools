@@ -42,6 +42,12 @@ When the user gives narration, split it into 4-8 beats for short segments and mo
 **Timing & Subtitle Alignment (动画与字幕时间的绝对对应)**:
 - **Strict Frame Alignment**: Every visual event, transition, stamp hit, machine error, or state transition MUST be strictly synchronized with the timestamps in the subtitle (SRT) file. Avoid visual changes that feel out of sync with the narration.
 - **Concise Narrative Banners**: Do not use the spoken narration text directly as the primary scene titles or overlay banners. Summarize the concept concisely into clean, professional title cards/headers (e.g. "什么是投影转换？" or "第一步：用 Define Projection 贴标签" rather than copying the spoken explanation word-for-word). Keep on-screen text shorter than narration. Use large text only for key hooks, thesis lines, contrast pairs, and final takeaways. Put supporting explanations into smaller captions, cards, diagrams, or motion labels.
+- **Aesthetic Style Consistency (风格统一与精简文案)**:
+  - Visual animations must maintain strict stylistic consistency with other scenes in the video (such as `OpeningScene` or `compare_video` / `GISComparison`).
+  - Use the shared `PaperBackground` component to ensure a unified color theme, drifting grid lines, floating sketch curves, and subtle radial gradient lighting.
+  - Do NOT display long explanatory text or transcript-like paragraphs that duplicate the voiceover subtitles.
+  - If titles or explanations are required, keep them highly summarized and concise. Ensure on-screen titles are clean editorial headings (e.g. using a unified `SectionTitle` component with an eyebrow, large serif title, and short monospace subtitle).
+
 
 ## Visual Style Defaults
 
