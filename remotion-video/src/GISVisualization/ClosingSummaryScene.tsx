@@ -31,18 +31,16 @@ const Float: React.FC<{
   rotateAmplitude?: number;
   delay?: number;
   style?: React.CSSProperties;
-}> = ({ children, speed = 60, amplitude = 6, delay = 0, style }) => {
+}> = ({ children, speed = 60, amplitude = 6, rotateAmplitude = 0.5, delay = 0, style }) => {
   const frame = useCurrentFrame();
   const t = frame + delay;
-  const y = Math.round(Math.sin(t / speed) * amplitude);
+  const y = Math.sin(t / speed) * amplitude;
+  const r = Math.cos(t / (speed * 1.2)) * rotateAmplitude;
   return (
     <div
       style={{
         ...style,
-        transform: `${style?.transform || ""} translate3d(0, ${y}px, 0)`,
-        willChange: "transform",
-        backfaceVisibility: "hidden",
-        WebkitFontSmoothing: "antialiased",
+        transform: `${style?.transform || ""} translateY(${y}px) rotate(${r}deg)`,
       }}
     >
       {children}
@@ -189,7 +187,7 @@ const TitleBlock: React.FC<{
         zIndex: 30,
       }}
     >
-      <div style={{ fontFamily: SERIF_STACK, fontSize: 24, color, fontWeight: 800, marginBottom: 14, letterSpacing: 0 }}>
+      <div style={{ fontFamily: MONO_STACK, fontSize: 24, color, fontWeight: 800, marginBottom: 14, letterSpacing: 0 }}>
         {eyebrow}
       </div>
       <div style={{ fontFamily: SERIF_STACK, fontSize: 66, lineHeight: 1.12, fontWeight: 800, color: "#26332e" }}>
@@ -214,7 +212,7 @@ const TagPill: React.FC<{
       border: `1.5px solid ${color}`,
       background: muted ? "rgba(255,255,255,0.7)" : `${color}14`,
       color,
-      fontFamily: SERIF_STACK,
+      fontFamily: MONO_STACK,
       fontSize: 20,
       fontWeight: 800,
       display: "flex",
@@ -261,10 +259,7 @@ const StatementCard: React.FC<{
         padding: 28,
         overflow: "hidden",
         opacity: interpolate(enter, [0, 1], [0, 1], clamp),
-        transform: `translate(-50%, -50%) scale(${interpolate(enter, [0, 1], [0.92, 1], clamp)}) translateX(${Math.round(shake)}px)`,
-        willChange: "transform",
-        backfaceVisibility: "hidden",
-        WebkitFontSmoothing: "antialiased",
+        transform: `translate(-50%, -50%) scale(${interpolate(enter, [0, 1], [0.92, 1], clamp)}) translateX(${shake}px)`,
         ...style,
       }}
     >
@@ -290,9 +285,6 @@ const MiniFile: React.FC<{ tagProgress: number; enter: number }> = ({ tagProgres
         opacity: enter,
         overflow: "hidden",
         transform: `translate(-50%, -50%) scale(${interpolate(enter, [0, 1], [0.92, 1], clamp)})`,
-        willChange: "transform",
-        backfaceVisibility: "hidden",
-        WebkitFontSmoothing: "antialiased",
       }}
     >
       <div style={{ height: 52, background: "#a77748", color: "white", fontFamily: MONO_STACK, fontSize: 18, display: "flex", alignItems: "center", paddingLeft: 20, fontWeight: 800 }}>
@@ -471,7 +463,7 @@ const DefineProjectPanel: React.FC = () => {
           </div>
           <svg width="380" height="58" viewBox="0 0 380 58" style={{ marginTop: 16, overflow: "visible" }}>
             {/* Left coordinate text - stationary */}
-            <text x="80" y="32" textAnchor="middle" fontFamily={MONO_STACK} fontSize="18" fontWeight="800" fill="#6f7368" style={{ willChange: "transform" }}>
+            <text x="80" y="32" textAnchor="middle" fontFamily={MONO_STACK} fontSize="18" fontWeight="800" fill="#6f7368">
               120.50, 31.20
             </text>
             {/* Animated arrow line */}
@@ -496,7 +488,7 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x={Math.round(288 + tagShiftX)}
+              x="288"
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
@@ -505,7 +497,7 @@ const DefineProjectPanel: React.FC = () => {
               fill="#10b981"
               style={{
                 opacity: tagRightOpacity,
-                willChange: "transform",
+                transform: `translateX(${tagShiftX}px)`,
               }}
             >
               120.50°E, 31.20°N
@@ -525,7 +517,7 @@ const DefineProjectPanel: React.FC = () => {
           </div>
           <svg width="350" height="58" viewBox="0 0 350 58" style={{ marginTop: 16, overflow: "visible" }}>
             {/* Left coordinate text - stationary */}
-            <text x="90" y="32" textAnchor="middle" fontFamily={MONO_STACK} fontSize="24" fontWeight="800" fill="#315f6d" style={{ willChange: "transform" }}>
+            <text x="90" y="32" textAnchor="middle" fontFamily={MONO_STACK} fontSize="24" fontWeight="800" fill="#315f6d">
               120.50
             </text>
             {/* Animated arrow line */}
@@ -550,7 +542,7 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x={Math.round(260 + shiftX)}
+              x="260"
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
@@ -559,7 +551,7 @@ const DefineProjectPanel: React.FC = () => {
               fill="#8f4e3e"
               style={{
                 opacity: rightOpacity,
-                willChange: "transform",
+                transform: `translateX(${shiftX}px)`,
               }}
             >
               408522
@@ -664,7 +656,7 @@ const WarningWorkflowPanel: React.FC = () => {
             <div style={{ fontFamily: SERIF_STACK, fontSize: 44, color: isError ? "#8f4e3e" : "#315f6d", fontWeight: 800 }}>
               Project
             </div>
-            <div style={{ marginTop: 18, fontFamily: SERIF_STACK, fontSize: 24, color: "#6f7368", fontWeight: 800 }}>
+            <div style={{ marginTop: 18, fontFamily: MONO_STACK, fontSize: 24, color: "#6f7368", fontWeight: 800 }}>
               公式计算
             </div>
             {isError && (
@@ -711,7 +703,7 @@ const WarningWorkflowPanel: React.FC = () => {
             <div style={{ fontFamily: SERIF_STACK, fontSize: 44, color: "#8f4e3e", fontWeight: 800 }}>
               结果不可信
             </div>
-            <div style={{ marginTop: 18, fontFamily: SERIF_STACK, fontSize: 24, color: "#6f7368", fontWeight: 800 }}>
+            <div style={{ marginTop: 18, fontFamily: MONO_STACK, fontSize: 24, color: "#6f7368", fontWeight: 800 }}>
               单位未知
             </div>
           </div>
@@ -795,43 +787,44 @@ const VertexDiagram: React.FC<{ enter: number }> = ({ enter }) => {
         boxSizing: "border-box",
         opacity: enter,
         transform: `scale(${interpolate(enter, [0, 1], [0.92, 1], clamp)})`,
-        willChange: "transform",
-        backfaceVisibility: "hidden",
-        WebkitFontSmoothing: "antialiased",
       }}
     >
       <TagPill label="矢量：换位置" color="#315f6d" />
       <svg width="510" height="280" viewBox="0 0 510 280" style={{ marginTop: 18 }}>
         <polygon
           points={pts
-            .map((p) => `${Math.round(interpolate(move, [0, 1], [p.x, p.nx], clamp))},${Math.round(interpolate(move, [0, 1], [p.y, p.ny], clamp))}`)
+            .map((p) => `${interpolate(move, [0, 1], [p.x, p.nx], clamp)},${interpolate(move, [0, 1], [p.y, p.ny], clamp)}`)
             .join(" ")}
           fill="#315f6d22"
           stroke="#315f6d"
           strokeWidth="4"
-          style={{ willChange: "transform" }}
         />
         {pts.map((p, idx) => {
-          const x = Math.round(interpolate(move, [0, 1], [p.x, p.nx], clamp));
-          const y = Math.round(interpolate(move, [0, 1], [p.y, p.ny], clamp));
+          const x = interpolate(move, [0, 1], [p.x, p.nx], clamp);
+          const y = interpolate(move, [0, 1], [p.y, p.ny], clamp);
+          const dx = x - p.x;
+          const dy = y - p.y;
           return (
             <g key={`vertex-${idx}`}>
               <path d={`M ${p.x} ${p.y} L ${p.nx} ${p.ny}`} stroke="#a77748" strokeWidth="2" strokeDasharray="7 7" opacity="0.55" />
               <circle cx={x} cy={y} r="9" fill="#fffdf8" stroke="#315f6d" strokeWidth="4" />
               <text
-                x={x + 13}
-                y={y - 11}
+                x={p.x + 13}
+                y={p.y - 11}
                 fontFamily={MONO_STACK}
                 fontSize="18"
                 fontWeight="800"
                 fill="#315f6d"
+                style={{
+                  transform: `translate(${dx}px, ${dy}px)`,
+                }}
               >
                 V{idx + 1}
               </text>
             </g>
           );
         })}
-        <text x="255" y="270" textAnchor="middle" fontFamily={SERIF_STACK} fontSize="22" fontWeight="800" fill="#6f7368" style={{ willChange: "transform" }}>
+        <text x="255" y="270" textAnchor="middle" fontFamily={MONO_STACK} fontSize="22" fontWeight="800" fill="#6f7368">
           每个顶点代入一次公式 → 得到新坐标
         </text>
       </svg>
@@ -867,9 +860,6 @@ const RasterDiagram: React.FC<{ enter: number }> = ({ enter }) => {
         boxSizing: "border-box",
         opacity: enter,
         transform: `scale(${interpolate(enter, [0, 1], [0.92, 1], clamp)})`,
-        willChange: "transform",
-        backfaceVisibility: "hidden",
-        WebkitFontSmoothing: "antialiased",
       }}
     >
       <TagPill label="栅格：重采样" color="#a77748" />
@@ -895,13 +885,13 @@ const RasterDiagram: React.FC<{ enter: number }> = ({ enter }) => {
           {/* Arrowhead pointing left */}
           <path d="M 22 48 L 10 60 L 22 72" fill="none" stroke="#8f4e3e" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
           {/* Text above the arrow */}
-          <text x="60" y="38" textAnchor="middle" fontFamily={SERIF_STACK} fontSize="18" fontWeight="800" fill="#8f4e3e">
+          <text x="60" y="38" textAnchor="middle" fontFamily={MONO_STACK} fontSize="18" fontWeight="800" fill="#8f4e3e">
             逆向反算
           </text>
         </svg>
         <div style={{ width: 170, fontFamily: SERIF_STACK, fontSize: 38, fontWeight: 800, color: "#26332e", lineHeight: 1.35 }}>
           插值填充
-          <div style={{ fontFamily: SERIF_STACK, fontSize: 22, color: "#6f7368", marginTop: 12, fontWeight: 800 }}>
+          <div style={{ fontFamily: MONO_STACK, fontSize: 22, color: "#6f7368", marginTop: 12, fontWeight: 800 }}>
             输出像元从原图取值
           </div>
         </div>
@@ -983,7 +973,7 @@ const FinalLockup: React.FC<{ enter: number }> = ({ enter }) => {
       >
         <div
           style={{
-            fontFamily: SERIF_STACK,
+            fontFamily: MONO_STACK,
             fontSize: 32,
             color: "#4f745d",
             fontWeight: 800,
