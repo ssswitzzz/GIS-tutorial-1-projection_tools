@@ -31,16 +31,17 @@ const Float: React.FC<{
   rotateAmplitude?: number;
   delay?: number;
   style?: React.CSSProperties;
-}> = ({ children, speed = 60, amplitude = 6, rotateAmplitude = 0.5, delay = 0, style }) => {
+}> = ({ children, speed = 60, amplitude = 6, delay = 0, style }) => {
   const frame = useCurrentFrame();
   const t = frame + delay;
   const y = Math.sin(t / speed) * amplitude;
-  const r = Math.cos(t / (speed * 1.2)) * rotateAmplitude;
   return (
     <div
       style={{
         ...style,
-        transform: `${style?.transform || ""} translateY(${y}px) rotate(${r}deg)`,
+        transform: `${style?.transform || ""} translate3d(0, ${y}px, 0)`,
+        backfaceVisibility: "hidden",
+        WebkitFontSmoothing: "antialiased",
       }}
     >
       {children}
@@ -187,7 +188,7 @@ const TitleBlock: React.FC<{
         zIndex: 30,
       }}
     >
-      <div style={{ fontFamily: MONO_STACK, fontSize: 24, color, fontWeight: 800, marginBottom: 14, letterSpacing: 0 }}>
+      <div style={{ fontFamily: SERIF_STACK, fontSize: 24, color, fontWeight: 800, marginBottom: 14, letterSpacing: 0 }}>
         {eyebrow}
       </div>
       <div style={{ fontFamily: SERIF_STACK, fontSize: 66, lineHeight: 1.12, fontWeight: 800, color: "#26332e" }}>
@@ -212,7 +213,7 @@ const TagPill: React.FC<{
       border: `1.5px solid ${color}`,
       background: muted ? "rgba(255,255,255,0.7)" : `${color}14`,
       color,
-      fontFamily: MONO_STACK,
+      fontFamily: SERIF_STACK,
       fontSize: 20,
       fontWeight: 800,
       display: "flex",
@@ -488,7 +489,7 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x="288"
+              x={288 + tagShiftX}
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
@@ -497,7 +498,6 @@ const DefineProjectPanel: React.FC = () => {
               fill="#10b981"
               style={{
                 opacity: tagRightOpacity,
-                transform: `translateX(${tagShiftX}px)`,
               }}
             >
               120.50°E, 31.20°N
@@ -542,7 +542,7 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x="260"
+              x={260 + shiftX}
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
@@ -551,7 +551,6 @@ const DefineProjectPanel: React.FC = () => {
               fill="#8f4e3e"
               style={{
                 opacity: rightOpacity,
-                transform: `translateX(${shiftX}px)`,
               }}
             >
               408522
@@ -656,7 +655,7 @@ const WarningWorkflowPanel: React.FC = () => {
             <div style={{ fontFamily: SERIF_STACK, fontSize: 44, color: isError ? "#8f4e3e" : "#315f6d", fontWeight: 800 }}>
               Project
             </div>
-            <div style={{ marginTop: 18, fontFamily: MONO_STACK, fontSize: 24, color: "#6f7368", fontWeight: 800 }}>
+            <div style={{ marginTop: 18, fontFamily: SERIF_STACK, fontSize: 24, color: "#6f7368", fontWeight: 800 }}>
               公式计算
             </div>
             {isError && (
@@ -703,7 +702,7 @@ const WarningWorkflowPanel: React.FC = () => {
             <div style={{ fontFamily: SERIF_STACK, fontSize: 44, color: "#8f4e3e", fontWeight: 800 }}>
               结果不可信
             </div>
-            <div style={{ marginTop: 18, fontFamily: MONO_STACK, fontSize: 24, color: "#6f7368", fontWeight: 800 }}>
+            <div style={{ marginTop: 18, fontFamily: SERIF_STACK, fontSize: 24, color: "#6f7368", fontWeight: 800 }}>
               单位未知
             </div>
           </div>
@@ -809,22 +808,19 @@ const VertexDiagram: React.FC<{ enter: number }> = ({ enter }) => {
               <path d={`M ${p.x} ${p.y} L ${p.nx} ${p.ny}`} stroke="#a77748" strokeWidth="2" strokeDasharray="7 7" opacity="0.55" />
               <circle cx={x} cy={y} r="9" fill="#fffdf8" stroke="#315f6d" strokeWidth="4" />
               <text
-                x={p.x + 13}
-                y={p.y - 11}
+                x={p.x + 13 + dx}
+                y={p.y - 11 + dy}
                 fontFamily={MONO_STACK}
                 fontSize="18"
                 fontWeight="800"
                 fill="#315f6d"
-                style={{
-                  transform: `translate(${dx}px, ${dy}px)`,
-                }}
               >
                 V{idx + 1}
               </text>
             </g>
           );
         })}
-        <text x="255" y="270" textAnchor="middle" fontFamily={MONO_STACK} fontSize="22" fontWeight="800" fill="#6f7368">
+        <text x="255" y="270" textAnchor="middle" fontFamily={SERIF_STACK} fontSize="22" fontWeight="800" fill="#6f7368">
           每个顶点代入一次公式 → 得到新坐标
         </text>
       </svg>
@@ -885,13 +881,13 @@ const RasterDiagram: React.FC<{ enter: number }> = ({ enter }) => {
           {/* Arrowhead pointing left */}
           <path d="M 22 48 L 10 60 L 22 72" fill="none" stroke="#8f4e3e" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
           {/* Text above the arrow */}
-          <text x="60" y="38" textAnchor="middle" fontFamily={MONO_STACK} fontSize="18" fontWeight="800" fill="#8f4e3e">
+          <text x="60" y="38" textAnchor="middle" fontFamily={SERIF_STACK} fontSize="18" fontWeight="800" fill="#8f4e3e">
             逆向反算
           </text>
         </svg>
         <div style={{ width: 170, fontFamily: SERIF_STACK, fontSize: 38, fontWeight: 800, color: "#26332e", lineHeight: 1.35 }}>
           插值填充
-          <div style={{ fontFamily: MONO_STACK, fontSize: 22, color: "#6f7368", marginTop: 12, fontWeight: 800 }}>
+          <div style={{ fontFamily: SERIF_STACK, fontSize: 22, color: "#6f7368", marginTop: 12, fontWeight: 800 }}>
             输出像元从原图取值
           </div>
         </div>
@@ -973,7 +969,7 @@ const FinalLockup: React.FC<{ enter: number }> = ({ enter }) => {
       >
         <div
           style={{
-            fontFamily: MONO_STACK,
+            fontFamily: SERIF_STACK,
             fontSize: 32,
             color: "#4f745d",
             fontWeight: 800,
