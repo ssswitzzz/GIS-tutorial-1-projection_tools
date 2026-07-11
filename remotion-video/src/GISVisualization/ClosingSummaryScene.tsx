@@ -34,12 +34,13 @@ const Float: React.FC<{
 }> = ({ children, speed = 60, amplitude = 6, delay = 0, style }) => {
   const frame = useCurrentFrame();
   const t = frame + delay;
-  const y = Math.sin(t / speed) * amplitude;
+  const y = Math.round(Math.sin(t / speed) * amplitude);
   return (
     <div
       style={{
         ...style,
         transform: `${style?.transform || ""} translate3d(0, ${y}px, 0)`,
+        willChange: "transform",
         backfaceVisibility: "hidden",
         WebkitFontSmoothing: "antialiased",
       }}
@@ -260,7 +261,10 @@ const StatementCard: React.FC<{
         padding: 28,
         overflow: "hidden",
         opacity: interpolate(enter, [0, 1], [0, 1], clamp),
-        transform: `translate(-50%, -50%) scale(${interpolate(enter, [0, 1], [0.92, 1], clamp)}) translateX(${shake}px)`,
+        transform: `translate(-50%, -50%) scale(${interpolate(enter, [0, 1], [0.92, 1], clamp)}) translateX(${Math.round(shake)}px)`,
+        willChange: "transform",
+        backfaceVisibility: "hidden",
+        WebkitFontSmoothing: "antialiased",
         ...style,
       }}
     >
@@ -286,6 +290,9 @@ const MiniFile: React.FC<{ tagProgress: number; enter: number }> = ({ tagProgres
         opacity: enter,
         overflow: "hidden",
         transform: `translate(-50%, -50%) scale(${interpolate(enter, [0, 1], [0.92, 1], clamp)})`,
+        willChange: "transform",
+        backfaceVisibility: "hidden",
+        WebkitFontSmoothing: "antialiased",
       }}
     >
       <div style={{ height: 52, background: "#a77748", color: "white", fontFamily: MONO_STACK, fontSize: 18, display: "flex", alignItems: "center", paddingLeft: 20, fontWeight: 800 }}>
@@ -464,7 +471,7 @@ const DefineProjectPanel: React.FC = () => {
           </div>
           <svg width="380" height="58" viewBox="0 0 380 58" style={{ marginTop: 16, overflow: "visible" }}>
             {/* Left coordinate text - stationary */}
-            <text x="80" y="32" textAnchor="middle" fontFamily={MONO_STACK} fontSize="18" fontWeight="800" fill="#6f7368">
+            <text x="80" y="32" textAnchor="middle" fontFamily={MONO_STACK} fontSize="18" fontWeight="800" fill="#6f7368" style={{ willChange: "transform" }}>
               120.50, 31.20
             </text>
             {/* Animated arrow line */}
@@ -489,7 +496,7 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x={288 + tagShiftX}
+              x={Math.round(288 + tagShiftX)}
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
@@ -498,6 +505,7 @@ const DefineProjectPanel: React.FC = () => {
               fill="#10b981"
               style={{
                 opacity: tagRightOpacity,
+                willChange: "transform",
               }}
             >
               120.50°E, 31.20°N
@@ -517,7 +525,7 @@ const DefineProjectPanel: React.FC = () => {
           </div>
           <svg width="350" height="58" viewBox="0 0 350 58" style={{ marginTop: 16, overflow: "visible" }}>
             {/* Left coordinate text - stationary */}
-            <text x="90" y="32" textAnchor="middle" fontFamily={MONO_STACK} fontSize="24" fontWeight="800" fill="#315f6d">
+            <text x="90" y="32" textAnchor="middle" fontFamily={MONO_STACK} fontSize="24" fontWeight="800" fill="#315f6d" style={{ willChange: "transform" }}>
               120.50
             </text>
             {/* Animated arrow line */}
@@ -542,7 +550,7 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x={260 + shiftX}
+              x={Math.round(260 + shiftX)}
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
@@ -551,6 +559,7 @@ const DefineProjectPanel: React.FC = () => {
               fill="#8f4e3e"
               style={{
                 opacity: rightOpacity,
+                willChange: "transform",
               }}
             >
               408522
@@ -786,30 +795,32 @@ const VertexDiagram: React.FC<{ enter: number }> = ({ enter }) => {
         boxSizing: "border-box",
         opacity: enter,
         transform: `scale(${interpolate(enter, [0, 1], [0.92, 1], clamp)})`,
+        willChange: "transform",
+        backfaceVisibility: "hidden",
+        WebkitFontSmoothing: "antialiased",
       }}
     >
       <TagPill label="矢量：换位置" color="#315f6d" />
       <svg width="510" height="280" viewBox="0 0 510 280" style={{ marginTop: 18 }}>
         <polygon
           points={pts
-            .map((p) => `${interpolate(move, [0, 1], [p.x, p.nx], clamp)},${interpolate(move, [0, 1], [p.y, p.ny], clamp)}`)
+            .map((p) => `${Math.round(interpolate(move, [0, 1], [p.x, p.nx], clamp))},${Math.round(interpolate(move, [0, 1], [p.y, p.ny], clamp))}`)
             .join(" ")}
           fill="#315f6d22"
           stroke="#315f6d"
           strokeWidth="4"
+          style={{ willChange: "transform" }}
         />
         {pts.map((p, idx) => {
-          const x = interpolate(move, [0, 1], [p.x, p.nx], clamp);
-          const y = interpolate(move, [0, 1], [p.y, p.ny], clamp);
-          const dx = x - p.x;
-          const dy = y - p.y;
+          const x = Math.round(interpolate(move, [0, 1], [p.x, p.nx], clamp));
+          const y = Math.round(interpolate(move, [0, 1], [p.y, p.ny], clamp));
           return (
             <g key={`vertex-${idx}`}>
               <path d={`M ${p.x} ${p.y} L ${p.nx} ${p.ny}`} stroke="#a77748" strokeWidth="2" strokeDasharray="7 7" opacity="0.55" />
               <circle cx={x} cy={y} r="9" fill="#fffdf8" stroke="#315f6d" strokeWidth="4" />
               <text
-                x={p.x + 13 + dx}
-                y={p.y - 11 + dy}
+                x={x + 13}
+                y={y - 11}
                 fontFamily={MONO_STACK}
                 fontSize="18"
                 fontWeight="800"
@@ -820,7 +831,7 @@ const VertexDiagram: React.FC<{ enter: number }> = ({ enter }) => {
             </g>
           );
         })}
-        <text x="255" y="270" textAnchor="middle" fontFamily={SERIF_STACK} fontSize="22" fontWeight="800" fill="#6f7368">
+        <text x="255" y="270" textAnchor="middle" fontFamily={SERIF_STACK} fontSize="22" fontWeight="800" fill="#6f7368" style={{ willChange: "transform" }}>
           每个顶点代入一次公式 → 得到新坐标
         </text>
       </svg>
@@ -856,6 +867,9 @@ const RasterDiagram: React.FC<{ enter: number }> = ({ enter }) => {
         boxSizing: "border-box",
         opacity: enter,
         transform: `scale(${interpolate(enter, [0, 1], [0.92, 1], clamp)})`,
+        willChange: "transform",
+        backfaceVisibility: "hidden",
+        WebkitFontSmoothing: "antialiased",
       }}
     >
       <TagPill label="栅格：重采样" color="#a77748" />
