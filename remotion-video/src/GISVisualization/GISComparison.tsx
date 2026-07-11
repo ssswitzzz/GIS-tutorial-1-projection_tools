@@ -160,7 +160,7 @@ const SectionTitle: React.FC<{
     <div style={{fontSize: 64, lineHeight: 1.12, fontWeight: 700, color: "#26332e"}}>
       {title}
     </div>
-    <div style={{fontFamily: MONO_STACK, fontSize: 16, color: "#6f7368", marginTop: 16}}>
+    <div style={{fontFamily: SERIF_STACK, fontSize: 16, color: "#6f7368", marginTop: 16}}>
       {subtitle}
     </div>
   </div>
@@ -325,7 +325,7 @@ const DefineCard: React.FC<{
           backgroundSize: "22px 22px",
         }}
       />
-      <div style={{position: "absolute", left: 38, top: 34, fontFamily: MONO_STACK, fontSize: 14, color: "#7a766c"}}>
+      <div style={{position: "absolute", left: 38, top: 34, fontFamily: SERIF_STACK, fontSize: 14, color: "#7a766c"}}>
         {eyebrow}
       </div>
       <div
@@ -333,7 +333,7 @@ const DefineCard: React.FC<{
           position: "absolute",
           right: 38,
           top: 34,
-          fontFamily: MONO_STACK,
+          fontFamily: SERIF_STACK,
           fontSize: 13,
           color: stamped ? color : "#8a8b80",
           display: "flex",
@@ -348,7 +348,7 @@ const DefineCard: React.FC<{
       <div style={{position: "absolute", left: 40, top: 120, width: 230}}>
         <div
           style={{
-            fontFamily: MONO_STACK,
+            fontFamily: SERIF_STACK,
             fontSize: 12,
             color: "#8a8b80",
             marginBottom: 8,
@@ -374,6 +374,7 @@ const DefineCard: React.FC<{
         </div>
         <div
           style={{
+            fontFamily: SERIF_STACK,
             fontSize: 18,
             color: "#6f7368",
             marginTop: 18,
@@ -393,7 +394,6 @@ const DefineCard: React.FC<{
           width: 260,
           borderLeft: "1px solid rgba(47, 55, 49, 0.14)",
           paddingLeft: 32,
-          fontFamily: MONO_STACK,
           fontSize: 15,
           color: "#6f7368",
           lineHeight: 1.9,
@@ -401,16 +401,16 @@ const DefineCard: React.FC<{
           transform: `translateX(${interpolate(revealProgress, [0.38, 0.7], [24, 0], clamp)}px)`,
         }}
       >
-        <div style={{fontSize: 12, color: "#8a8b80", marginBottom: 8}}>解释这串数字</div>
-        <div style={{display: "flex", justifyContent: "space-between"}}>
+        <div style={{fontFamily: SERIF_STACK, fontSize: 12, color: "#8a8b80", marginBottom: 8}}>解释这串数字</div>
+        <div style={{display: "flex", justifyContent: "space-between", fontFamily: MONO_STACK}}>
           <span>X:</span>
           <b style={{color: stamped ? color : "#26332e"}}>{firstRow}</b>
         </div>
-        <div style={{display: "flex", justifyContent: "space-between"}}>
+        <div style={{display: "flex", justifyContent: "space-between", fontFamily: MONO_STACK}}>
           <span>Y:</span>
           <b style={{color: stamped ? color : "#26332e"}}>{secondRow}</b>
         </div>
-        <div style={{fontSize: 12, color: "#8a8b80", marginTop: 8}}>{footer}</div>
+        <div style={{fontFamily: SERIF_STACK, fontSize: 12, color: "#8a8b80", marginTop: 8}}>{footer}</div>
       </div>
 
       <div
@@ -421,6 +421,7 @@ const DefineCard: React.FC<{
           width: 310,
           borderTop: "1px solid rgba(47, 55, 49, 0.12)",
           paddingTop: 18,
+          fontFamily: SERIF_STACK,
           fontSize: 26,
           color: "#29342f",
           fontWeight: 700,
@@ -490,7 +491,7 @@ const ProjectCard: React.FC<{
           border: `1.5px solid ${borderMuted}`,
           background: bgHeader,
           color,
-          fontFamily: MONO_STACK,
+          fontFamily: SERIF_STACK,
           fontSize: 16,
           fontWeight: 800,
           display: "flex",
@@ -515,14 +516,13 @@ const ProjectCard: React.FC<{
           style={{
             display: "flex",
             justifyContent: "space-between",
-            fontFamily: MONO_STACK,
             fontSize: 16,
             opacity: interpolate(revealProgress, [0, 0.24], [0, 1], clamp),
             transform: `translateY(${interpolate(revealProgress, [0, 0.24], [10, 0], clamp)}px)`,
           }}
         >
-          <span style={{color: "#8a8b80"}}>{tone === "source" ? "输入文件.shp" : "输出文件_new.shp"}</span>
-          <span style={{color, fontWeight: 800}}>{status}</span>
+          <span style={{color: "#8a8b80", fontFamily: SERIF_STACK}}>{tone === "source" ? "输入文件.shp" : "输出文件_new.shp"}</span>
+          <span style={{color, fontWeight: 800, fontFamily: SERIF_STACK}}>{status}</span>
         </div>
         <div
           style={{
@@ -543,24 +543,23 @@ const ProjectCard: React.FC<{
             borderTop: "1px solid rgba(47, 55, 49, 0.12)",
             marginTop: 20,
             paddingTop: 14,
-            fontFamily: MONO_STACK,
             lineHeight: 1.8,
             opacity: interpolate(revealProgress, [0.4, 0.72], [0, 1], clamp),
             transform: `translateY(${interpolate(revealProgress, [0.4, 0.72], [16, 0], clamp)}px)`,
           }}
         >
           <div style={{display: "flex", justifyContent: "space-between", height: 50, alignItems: "center"}}>
-            <span style={{fontSize: 22, color: "#6f7368", fontWeight: 700}}>X 坐标:</span>
-            <b style={{fontSize: 44, color: "#26332e"}}>{xValue}</b>
+            <span style={{fontSize: 22, color: "#6f7368", fontWeight: 700, fontFamily: SERIF_STACK}}>X 坐标:</span>
+            <b style={{fontSize: 44, fontFamily: MONO_STACK, color: "#26332e"}}>{xValue}</b>
           </div>
           <div style={{display: "flex", justifyContent: "space-between", height: 50, alignItems: "center", marginTop: 10}}>
-            <span style={{fontSize: 22, color: "#6f7368", fontWeight: 700}}>Y 坐标:</span>
-            <b style={{fontSize: 44, color: "#26332e"}}>{yValue}</b>
+            <span style={{fontSize: 22, color: "#6f7368", fontWeight: 700, fontFamily: SERIF_STACK}}>Y 坐标:</span>
+            <b style={{fontSize: 44, fontFamily: MONO_STACK, color: "#26332e"}}>{yValue}</b>
           </div>
         </div>
         <div
           style={{
-            fontFamily: MONO_STACK,
+            fontFamily: SERIF_STACK,
             fontSize: 15,
             color: "#8a8b80",
             marginTop: 22,
@@ -940,7 +939,7 @@ export const GISComparison: React.FC = () => {
             <div style={{fontSize: 30, fontWeight: 700, color: "#8f4e3e"}}>
               注意：定义投影没有改数据，只是补说明。
             </div>
-            <div style={{fontFamily: MONO_STACK, fontSize: 14, color: "#6f7368", marginTop: 10}}>
+            <div style={{fontFamily: SERIF_STACK, fontSize: 14, color: "#6f7368", marginTop: 10}}>
               纸上仍然是 100；GIS 底层仍然是 121 和 31。变化的是“如何解释它们”。
             </div>
           </div>
