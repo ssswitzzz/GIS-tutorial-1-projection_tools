@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>视频封面：分不清投影和定义投影？一个视频让你搞懂！</title>
+  <!-- 引入谷歌思源宋体 Noto Serif SC 及等宽 JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* 基础画布配置（1920x1080 视频封面标准尺寸） */
+    body {
+      margin: 0;
+      padding: 0;
+      width: 1920px;
+      height: 1080px;
+      background-color: #0b0d13;
+      color: #f1f5f9;
+      font-family: "Noto Serif SC", "Source Han Serif CN", "思源宋体", serif;
+      overflow: hidden;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    /* 辅助高科技背景网格（全部使用矢量 SVG） */
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.15;
+    }
+
+    /* 暗部渐变，增强深度与氛围感 */
+    .bg-gradient {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: radial-gradient(circle at 30% 70%, rgba(91, 168, 120, 0.08) 0%, transparent 60%),
+                  radial-gradient(circle at 70% 70%, rgba(58, 146, 178, 0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* 极光微光分隔带 */
+    .divider-glow {
+      position: absolute;
+      left: 50%;
+      top: 360px;
+      bottom: 80px;
+      width: 2px;
+      background: linear-gradient(180deg, transparent, rgba(226, 156, 66, 0.3) 30%, rgba(226, 156, 66, 0.3) 70%, transparent);
+      transform: translateX(-50%);
+      z-index: 3;
+    }
+
+    /* 顶部标题区包装 */
+    .header-container {
+      position: absolute;
+      top: 80px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 10;
+    }
+
+    /* 主标题：分不清定义投影和投影？ */
+    .main-title {
+      font-size: 80px;
+      font-weight: 900;
+      margin: 0;
+      padding: 0;
+      color: #ffffff;
+      letter-spacing: 2px;
+      text-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 强调文字 */
+    .title-highlight-green {
+      color: #5ba878;
+    }
+    .title-highlight-blue {
+      color: #3a92b2;
+    }
+
+    /* 副标题：一个视频彻底搞懂！ */
+    .subtitle-badge {
+      display: inline-block;
+      margin-top: 24px;
+      background: linear-gradient(90deg, #d97706, #e29c42, #d97706);
+      color: #0b0d13;
+      font-size: 34px;
+      font-weight: 900;
+      padding: 10px 48px;
+      border-radius: 999px;
+      box-shadow: 0 10px 40px rgba(226, 156, 66, 0.35);
+      letter-spacing: 6px;
+      text-indent: 6px;
+    }
+
+    /* 核心对比区布局 */
+    .content-area {
+      position: absolute;
+      top: 380px;
+      left: 80px;
+      right: 80px;
+      bottom: 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 5;
+    }
+
+    /* 左右分栏容器 */
+    .column-box {
+      width: 800px;
+      height: 560px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* 栏目概念标签 */
+    .column-label {
+      font-size: 40px;
+      font-weight: 900;
+      margin-bottom: 24px;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .column-label.green { color: #5ba878; }
+    .column-label.blue { color: #3a92b2; }
+
+    /* 概念英文修饰字 */
+    .concept-en {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.45;
+      margin-bottom: 30px;
+    }
+
+    /* 卡片本体：高阶毛玻璃质感（AI 中会导入为带透明度的矩形，完全可编辑） */
+    .card-element {
+      width: 580px;
+      height: 380px;
+      background: rgba(255, 252, 244, 0.04);
+      border-radius: 20px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: visible;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+    }
+    .card-element.green {
+      border: 2px solid rgba(91, 168, 120, 0.35);
+    }
+    .card-element.blue {
+      border: 2px solid rgba(58, 146, 178, 0.35);
+    }
+
+    /* 卡片内头部 */
+    .card-header {
+      height: 50px;
+      border-bottom: 1px dashed rgba(241, 245, 249, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+    }
+    .card-header span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: #8a8b80;
+    }
+    .card-header .status {
+      font-weight: 700;
+    }
+    .card-header.green .status { color: #5ba878; }
+    .card-header.blue .status { color: #3a92b2; }
+
+    /* 卡片内正文数值区 */
+    .card-body {
+      padding: 28px;
+      position: relative;
+    }
+
+    /* 金额大字号 */
+    .big-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 76px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1;
+      margin-top: 10px;
+      display: flex;
+      align-items: baseline;
+    }
+    .big-value .unit {
+      font-family: "Noto Serif SC", serif;
+      font-size: 56px;
+      margin-left: 14px;
+    }
+    .card-element.green .unit { color: #5ba878; }
+    .card-element.blue .unit { color: #3a92b2; }
+
+    /* 数值解释行 */
+    .desc-text {
+      font-size: 24px;
+      color: #9ba098;
+      margin-top: 24px;
+      font-weight: 700;
+    }
+
+    /* 坐标数据分隔线与参数区 */
+    .coord-section {
+      border-top: 1px dashed rgba(241, 245, 249, 0.12);
+      margin-top: 24px;
+      padding-top: 18px;
+    }
+
+    .coord-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .coord-label {
+      font-size: 20px;
+      color: #7a7d85;
+      font-weight: 700;
+    }
+    .coord-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 800;
+      color: #e2e8f0;
+    }
+
+    /* 装饰：行李牌挂绳（Define Projection） */
+    .hanging-tag {
+      position: absolute;
+      right: 40px;
+      top: -30px;
+      z-index: 15;
+    }
+
+    /* 装饰：计算齿轮 (Project) */
+    .math-gear {
+      position: absolute;
+      right: 40px;
+      top: -30px;
+      z-index: 15;
+    }
+
+    /* 底部警告条 */
+    .footer-warning {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      color: rgba(241, 245, 249, 0.35);
+      z-index: 10;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 矢量背景网格（100% 矢量线条，AI 可完美转换为编辑路径） -->
+  <svg class="bg-grid" width="100%" height="100%">
+    <defs>
+      <pattern id="grid-pattern" width="80" height="80" patternUnits="userSpaceOnUse">
+        <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(241, 245, 249, 0.4)" stroke-width="1"/>
+        <path d="M 40 0 L 40 80 M 0 40 L 80 40" fill="none" stroke="rgba(241, 245, 249, 0.15)" stroke-width="0.5" stroke-dasharray="4 4"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+  </svg>
+
+  <!-- 背景暗部光晕 -->
+  <div class="bg-gradient"></div>
+
+  <!-- 左右分割中轴线 -->
+  <div class="divider-glow"></div>
+
+  <!-- 顶部主副标题 -->
+  <div class="header-container">
+    <h1 class="main-title">
+      分不清<span class="title-highlight-green">定义投影</span>和<span class="title-highlight-blue">投影</span>？
+    </h1>
+    <div class="subtitle-badge">一个视频彻底搞懂！</div>
+  </div>
+
+  <!-- 核心卡片比对区 -->
+  <div class="content-area">
+    
+    <!-- 左半边：定义投影 (Define Projection) -->
+    <div class="column-box">
+      <div class="column-label green">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+          <line x1="7" y1="7" x2="7.01" y2="7"></line>
+        </svg>
+        定义投影 = 贴标签
+      </div>
+      <div class="concept-en">Define Projection</div>
+      
+      <!-- 矢量卡片 -->
+      <div class="card-element green">
+        <!-- 矢量行李牌（悬挂在卡片右上角，AI 导入后为全矢量图形，可旋转、缩放） -->
+        <svg class="hanging-tag" width="70" height="110" viewBox="0 0 70 110">
+          <!-- 挂绳 -->
+          <path d="M 35 0 Q 30 20 35 40" fill="none" stroke="#e29c42" stroke-width="2.5" stroke-dasharray="3 2" />
+          <!-- 标签牌 -->
+          <rect x="10" y="35" width="50" height="70" rx="8" fill="#e29c42" stroke="#ffffff" stroke-width="1.5" />
+          <!-- 挂绳孔 -->
+          <circle cx="35" cy="45" r="4" fill="#0b0d13" />
+          <!-- 标签文字（可编辑） -->
+          <text x="35" y="85" font-family="'JetBrains Mono', monospace" font-size="36" font-weight="900" fill="#0b0d13" text-anchor="middle">$</text>
+        </svg>
+
+        <div class="card-header green">
+          <span>INPUT_FILE.SHP</span>
+          <span class="status">标签已附加</span>
+        </div>
+        <div class="card-body">
+          <div class="big-value">
+            100
+            <span class="unit">$</span>
+          </div>
+          <div class="desc-text">数字本身完全不动</div>
+          
+          <div class="coord-section">
+            <div class="coord-row">
+              <span class="coord-label">X 坐标 (经度):</span>
+              <span class="coord-val">121.000°</span>
+            </div>
+            <div class="coord-row">
+              <span class="coord-label">Y 坐标 (纬度):</span>
+              <span class="coord-val">31.000°</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右半边：投影 (Project) -->
+    <div class="column-box">
+      <div class="column-label blue">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        投影 = 算数字
+      </div>
+      <div class="concept-en">Project / Transformation</div>
+      
+      <!-- 矢量卡片 -->
+      <div class="card-element blue">
+        <!-- 矢量数学齿轮/运算徽章 -->
+        <svg class="math-gear" width="70" height="70" viewBox="0 0 70 70">
+          <circle cx="35" cy="35" r="30" fill="#3a92b2" stroke="#ffffff" stroke-width="1.5" />
+          <path d="M 35 15 L 35 55 M 15 35 L 55 35" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+          <circle cx="35" cy="35" r="14" fill="#0b0d13" stroke="#ffffff" stroke-width="1.5" />
+          <text x="35" y="41" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle">f(x)</text>
+        </svg>
+
+        <div class="card-header blue">
+          <span>OUTPUT_FILE_NEW.SHP</span>
+          <span class="status">重算并写入</span>
+        </div>
+        <div class="card-body">
+          <div class="big-value">
+            679
+            <span class="unit">¥</span>
+          </div>
+          <div class="desc-text">底层数值彻底被重算</div>
+          
+          <div class="coord-section">
+            <div class="coord-row">
+              <span class="coord-label">X 坐标 (米):</span>
+              <span class="coord-val">121,000 m</span>
+            </div>
+            <div class="coord-row">
+              <span class="coord-label">Y 坐标 (米):</span>
+              <span class="coord-val">40,489,254 m</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 底部页脚说明（作为 Illustrator 的文本图层导入） -->
+  <div class="footer-warning">
+    注：本设计内全部图形、文字及路径均为原生 CSS / SVG 矢量数据，可使用浏览器打印为 PDF 并导入 Adobe Illustrator 编辑。
+  </div>
+
+</body>
+</html>
