@@ -539,7 +539,7 @@ class ProjectRasterScene(Scene):
         # ── Beat 12: Sub #171–#172 — 从坐标系A投影到坐标系B ──
         cue(19)
 
-        sec2 = section_title("投影变换", BLUE)
+        sec2 = section_title("投影栅格", BLUE)
         play_to(S[19][0] + 0.6,
                 FadeIn(sec2, shift=DOWN * 0.12),
                 )
