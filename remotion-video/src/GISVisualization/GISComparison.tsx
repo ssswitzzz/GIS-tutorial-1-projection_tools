@@ -27,16 +27,17 @@ const Float: React.FC<{
   rotateAmplitude?: number;
   delay?: number;
   style?: React.CSSProperties;
-}> = ({ children, speed = 60, amplitude = 6, rotateAmplitude = 0.5, delay = 0, style }) => {
+}> = ({ children, speed = 60, amplitude = 6, delay = 0, style }) => {
   const frame = useCurrentFrame();
   const t = frame + delay;
   const y = Math.sin(t / speed) * amplitude;
-  const r = Math.cos(t / (speed * 1.2)) * rotateAmplitude;
   return (
     <div
       style={{
         ...style,
-        transform: `${style?.transform || ""} translateY(${y}px) rotate(${r}deg)`,
+        transform: `${style?.transform || ""} translate3d(0, ${y}px, 0)`,
+        backfaceVisibility: "hidden",
+        WebkitFontSmoothing: "antialiased",
       }}
     >
       {children}
@@ -475,10 +476,12 @@ const ProjectCard: React.FC<{
         position: "absolute",
         left: x,
         top: y,
-        width: 440,
+        width: 460,
         opacity,
         transform: `scale(${scale})`,
         transformOrigin: "center center",
+        backfaceVisibility: "hidden",
+        WebkitFontSmoothing: "antialiased",
       }}
     >
       <div
@@ -500,7 +503,7 @@ const ProjectCard: React.FC<{
       </div>
       <div
         style={{
-          height: 300,
+          height: 340,
           background: "rgba(255, 252, 244, 0.88)",
           border: `1.5px solid ${borderMuted}`,
           boxShadow: "0 26px 70px rgba(55, 48, 38, 0.12)",
@@ -546,13 +549,13 @@ const ProjectCard: React.FC<{
             transform: `translateY(${interpolate(revealProgress, [0.4, 0.72], [16, 0], clamp)}px)`,
           }}
         >
-          <div style={{display: "flex", justifyContent: "space-between", height: 32, alignItems: "center"}}>
-            <span style={{fontSize: 18, color: "#6f7368"}}>X 坐标:</span>
-            <b style={{fontSize: 20, color: "#26332e"}}>{xValue}</b>
+          <div style={{display: "flex", justifyContent: "space-between", height: 50, alignItems: "center"}}>
+            <span style={{fontSize: 22, color: "#6f7368", fontWeight: 700}}>X 坐标:</span>
+            <b style={{fontSize: 44, color: "#26332e"}}>{xValue}</b>
           </div>
-          <div style={{display: "flex", justifyContent: "space-between", height: 32, alignItems: "center"}}>
-            <span style={{fontSize: 18, color: "#6f7368"}}>Y 坐标:</span>
-            <b style={{fontSize: 20, color: "#26332e"}}>{yValue}</b>
+          <div style={{display: "flex", justifyContent: "space-between", height: 50, alignItems: "center", marginTop: 10}}>
+            <span style={{fontSize: 22, color: "#6f7368", fontWeight: 700}}>Y 坐标:</span>
+            <b style={{fontSize: 44, color: "#26332e"}}>{yValue}</b>
           </div>
         </div>
         <div
@@ -560,7 +563,7 @@ const ProjectCard: React.FC<{
             fontFamily: MONO_STACK,
             fontSize: 15,
             color: "#8a8b80",
-            marginTop: 18,
+            marginTop: 22,
             opacity: interpolate(revealProgress, [0.7, 1], [0, 1], clamp),
           }}
         >
@@ -983,7 +986,7 @@ export const GISComparison: React.FC = () => {
           >
             <svg width="1920" height="1080" viewBox="0 0 1920 1080" style={{position: "absolute", inset: 0, overflow: "visible"}}>
               <path
-                d="M620 540 C 740 490, 840 490, 960 540 S 1180 590, 1300 540"
+                d="M640 540 C 760 490, 840 490, 960 540 S 1160 590, 1280 540"
                 fill="none"
                 stroke="rgba(167,119,72,0.45)"
                 strokeWidth="3"
@@ -991,7 +994,7 @@ export const GISComparison: React.FC = () => {
                 strokeDashoffset={-frame * 1.5}
               />
               <path
-                d="M620 560 C 740 610, 840 610, 960 560 S 1180 510, 1300 560"
+                d="M640 560 C 760 610, 840 610, 960 560 S 1160 510, 1280 560"
                 fill="none"
                 stroke="rgba(49,95,109,0.36)"
                 strokeWidth="3"
@@ -1053,7 +1056,7 @@ export const GISComparison: React.FC = () => {
               delay={35}
               style={{
                 position: "absolute",
-                left: interpolate(targetCardIn, [0, 1], [1050, 1300]),
+                left: interpolate(targetCardIn, [0, 1], [1050, 1280]),
                 top: 380,
                 opacity: interpolate(targetCardIn, [0, 1], [0, 1]),
               }}
