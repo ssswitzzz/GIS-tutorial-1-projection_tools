@@ -49,11 +49,11 @@ const fade = (frame: number, start: number, end: number, fadeIn = 18, fadeOut = 
   interpolate(frame, [start, start + fadeIn, end - fadeOut, end], [0, 1, 1, 0], clamp);
 
 const softStep = (frame: number, from: number, to: number) =>
-  interpolate(frame, [from, to], [0, 1], {...clamp, easing: ease});
+  interpolate(frame, [from, to], [0, 1], { ...clamp, easing: ease });
 
-const PaperBackground: React.FC<{tone?: "light" | "warm"}> = ({tone = "light"}) => {
+const PaperBackground: React.FC<{ tone?: "light" | "warm" }> = ({ tone = "light" }) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
+  const { fps } = useVideoConfig();
   const normalizedFrame = frame * (30 / fps);
   const drift = interpolate(Math.sin(normalizedFrame / 90), [-1, 1], [-10, 10]);
 
@@ -81,7 +81,7 @@ const PaperBackground: React.FC<{tone?: "light" | "warm"}> = ({tone = "light"}) 
         width="1920"
         height="1080"
         viewBox="0 0 1920 1080"
-        style={{position: "absolute", inset: 0, opacity: 0.16}}
+        style={{ position: "absolute", inset: 0, opacity: 0.16 }}
       >
         <path d="M-40 736 C 246 664, 402 810, 710 718 S 1238 470, 1970 592" fill="none" stroke="#6d7c6b" strokeWidth="2" />
         <path d="M-30 812 C 246 734, 460 910, 748 804 S 1300 540, 1980 664" fill="none" stroke="#6d7c6b" strokeWidth="2" />
@@ -101,7 +101,7 @@ const PaperBackground: React.FC<{tone?: "light" | "warm"}> = ({tone = "light"}) 
   );
 };
 
-const TopCode: React.FC<{text: string; active?: boolean}> = ({text, active = true}) => (
+const TopCode: React.FC<{ text: string; active?: boolean }> = ({ text, active = true }) => (
   <div
     style={{
       position: "absolute",
@@ -135,7 +135,7 @@ const SectionTitle: React.FC<{
   subtitle: string;
   y?: number;
   color?: string;
-}> = ({eyebrow, title, subtitle, y = 118, color = "#4f745d"}) => (
+}> = ({ eyebrow, title, subtitle, y = 118, color = "#4f745d" }) => (
   <div
     style={{
       position: "absolute",
@@ -157,10 +157,10 @@ const SectionTitle: React.FC<{
     >
       {eyebrow}
     </div>
-    <div style={{fontSize: 64, lineHeight: 1.12, fontWeight: 700, color: "#26332e"}}>
+    <div style={{ fontSize: 64, lineHeight: 1.12, fontWeight: 700, color: "#26332e" }}>
       {title}
     </div>
-    <div style={{fontFamily: SERIF_STACK, fontSize: 16, color: "#6f7368", marginTop: 16}}>
+    <div style={{ fontFamily: SERIF_STACK, fontSize: 16, color: "#6f7368", marginTop: 16 }}>
       {subtitle}
     </div>
   </div>
@@ -171,7 +171,7 @@ const DrawnStamp: React.FC<{
   tone: "green" | "amber";
   title: string;
   label: string;
-}> = ({progress, tone, title, label}) => {
+}> = ({ progress, tone, title, label }) => {
   const color = tone === "green" ? "#4f745d" : "#a77748";
   const bg = tone === "green" ? "rgba(79, 116, 93, 0.07)" : "rgba(167, 119, 72, 0.08)";
 
@@ -194,7 +194,7 @@ const DrawnStamp: React.FC<{
         boxShadow: `0 12px 30px ${tone === "green" ? "rgba(79, 116, 93, 0.12)" : "rgba(167, 119, 72, 0.12)"}`,
       }}
     >
-      <svg width="150" height="62" viewBox="0 0 150 62" style={{position: "absolute"}}>
+      <svg width="150" height="62" viewBox="0 0 150 62" style={{ position: "absolute" }}>
         <rect
           x="5"
           y="5"
@@ -208,8 +208,8 @@ const DrawnStamp: React.FC<{
           strokeDashoffset={interpolate(progress, [0, 1], [160, 0])}
         />
       </svg>
-      <div style={{fontFamily: MONO_STACK, fontSize: 12, color, fontWeight: 800}}>{title}</div>
-      <div style={{fontFamily: SERIF_STACK, fontSize: 25, color, fontWeight: 700, marginTop: 4}}>
+      <div style={{ fontFamily: MONO_STACK, fontSize: 12, color, fontWeight: 800 }}>{title}</div>
+      <div style={{ fontFamily: SERIF_STACK, fontSize: 25, color, fontWeight: 700, marginTop: 4 }}>
         {label}
       </div>
     </div>
@@ -219,7 +219,7 @@ const DrawnStamp: React.FC<{
 const FocusBeam: React.FC<{
   progress: number;
   tone: "green" | "amber" | "blue";
-}> = ({progress, tone}) => {
+}> = ({ progress, tone }) => {
   const color =
     tone === "green"
       ? "rgba(79, 116, 93, 0.24)"
@@ -294,149 +294,149 @@ const DefineCard: React.FC<{
   revealProgress = 1,
   beamProgress = 0,
 }) => {
-  const color = tone === "green" ? "#4f745d" : "#a77748";
-  const muted = tone === "green" ? "rgba(79, 116, 93, 0.34)" : "rgba(167, 119, 72, 0.34)";
+    const color = tone === "green" ? "#4f745d" : "#a77748";
+    const muted = tone === "green" ? "rgba(79, 116, 93, 0.34)" : "rgba(167, 119, 72, 0.34)";
 
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: x,
-        top: y,
-        width: 620,
-        height: 388,
-        background: "rgba(255, 252, 244, 0.86)",
-        border: `1px solid ${stamped ? muted : "rgba(47, 55, 49, 0.16)"}`,
-        boxShadow: stamped
-          ? `0 30px 80px ${tone === "green" ? "rgba(79, 116, 93, 0.14)" : "rgba(167, 119, 72, 0.14)"}`
-          : "0 26px 70px rgba(55, 48, 38, 0.10)",
-        overflow: "hidden",
-        opacity,
-        transform: `scale(${scale}) rotate(${rotate}deg)`,
-        transformOrigin: "center center",
-      }}
-    >
+    return (
       <div
         style={{
           position: "absolute",
-          inset: 0,
-          opacity: 0.09,
-          backgroundImage: "radial-gradient(#29342f 1px, transparent 1px)",
-          backgroundSize: "22px 22px",
-        }}
-      />
-      <div style={{position: "absolute", left: 38, top: 34, fontFamily: SERIF_STACK, fontSize: 14, color: "#7a766c"}}>
-        {eyebrow}
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          right: 38,
-          top: 34,
-          fontFamily: SERIF_STACK,
-          fontSize: 13,
-          color: stamped ? color : "#8a8b80",
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
+          left: x,
+          top: y,
+          width: 620,
+          height: 388,
+          background: "rgba(255, 252, 244, 0.86)",
+          border: `1px solid ${stamped ? muted : "rgba(47, 55, 49, 0.16)"}`,
+          boxShadow: stamped
+            ? `0 30px 80px ${tone === "green" ? "rgba(79, 116, 93, 0.14)" : "rgba(167, 119, 72, 0.14)"}`
+            : "0 26px 70px rgba(55, 48, 38, 0.10)",
+          overflow: "hidden",
+          opacity,
+          transform: `scale(${scale}) rotate(${rotate}deg)`,
+          transformOrigin: "center center",
         }}
       >
-        <span style={{width: 7, height: 7, borderRadius: 999, background: stamped ? color : "#9ba098"}} />
-        {stamped ? "标签已附加" : "等待标签"}
-      </div>
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            opacity: 0.09,
+            backgroundImage: "radial-gradient(#29342f 1px, transparent 1px)",
+            backgroundSize: "22px 22px",
+          }}
+        />
+        <div style={{ position: "absolute", left: 38, top: 34, fontFamily: SERIF_STACK, fontSize: 14, color: "#7a766c" }}>
+          {eyebrow}
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            right: 38,
+            top: 34,
+            fontFamily: SERIF_STACK,
+            fontSize: 13,
+            color: stamped ? color : "#8a8b80",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          <span style={{ width: 7, height: 7, borderRadius: 999, background: stamped ? color : "#9ba098" }} />
+          {stamped ? "标签已附加" : "等待标签"}
+        </div>
 
-      <div style={{position: "absolute", left: 40, top: 120, width: 230}}>
-        <div
-          style={{
-            fontFamily: SERIF_STACK,
-            fontSize: 12,
-            color: "#8a8b80",
-            marginBottom: 8,
-            opacity: interpolate(revealProgress, [0, 0.18], [0, 1], clamp),
-            transform: `translateY(${interpolate(revealProgress, [0, 0.18], [12, 0], clamp)}px)`,
-          }}
-        >
-          底层数字
+        <div style={{ position: "absolute", left: 40, top: 120, width: 230 }}>
+          <div
+            style={{
+              fontFamily: SERIF_STACK,
+              fontSize: 12,
+              color: "#8a8b80",
+              marginBottom: 8,
+              opacity: interpolate(revealProgress, [0, 0.18], [0, 1], clamp),
+              transform: `translateY(${interpolate(revealProgress, [0, 0.18], [12, 0], clamp)}px)`,
+            }}
+          >
+            底层数字
+          </div>
+          <div
+            style={{
+              fontFamily: MONO_STACK,
+              fontSize: 72,
+              lineHeight: 1,
+              color: "#26332e",
+              fontWeight: 800,
+              opacity: interpolate(revealProgress, [0.08, 0.32], [0, 1], clamp),
+              transform: `translateY(${interpolate(revealProgress, [0.08, 0.32], [18, 0], clamp)}px)`,
+            }}
+          >
+            {mainValue}
+            <span style={{ fontFamily: SERIF_STACK, color, fontSize: 50, marginLeft: 14 }}>{unitLabel}</span>
+          </div>
+          <div
+            style={{
+              fontFamily: SERIF_STACK,
+              fontSize: 18,
+              color: "#6f7368",
+              marginTop: 18,
+              opacity: interpolate(revealProgress, [0.22, 0.46], [0, 1], clamp),
+              transform: `translateY(${interpolate(revealProgress, [0.22, 0.46], [14, 0], clamp)}px)`,
+            }}
+          >
+            数字本身不动
+          </div>
         </div>
+
         <div
           style={{
-            fontFamily: MONO_STACK,
-            fontSize: 72,
-            lineHeight: 1,
-            color: "#26332e",
-            fontWeight: 800,
-            opacity: interpolate(revealProgress, [0.08, 0.32], [0, 1], clamp),
-            transform: `translateY(${interpolate(revealProgress, [0.08, 0.32], [18, 0], clamp)}px)`,
-          }}
-        >
-          {mainValue}
-          <span style={{fontFamily: SERIF_STACK, color, fontSize: 50, marginLeft: 14}}>{unitLabel}</span>
-        </div>
-        <div
-          style={{
-            fontFamily: SERIF_STACK,
-            fontSize: 18,
+            position: "absolute",
+            left: 310,
+            top: 116,
+            width: 260,
+            borderLeft: "1px solid rgba(47, 55, 49, 0.14)",
+            paddingLeft: 32,
+            fontSize: 15,
             color: "#6f7368",
-            marginTop: 18,
-            opacity: interpolate(revealProgress, [0.22, 0.46], [0, 1], clamp),
-            transform: `translateY(${interpolate(revealProgress, [0.22, 0.46], [14, 0], clamp)}px)`,
+            lineHeight: 1.9,
+            opacity: interpolate(revealProgress, [0.38, 0.7], [0, 1], clamp),
+            transform: `translateX(${interpolate(revealProgress, [0.38, 0.7], [24, 0], clamp)}px)`,
           }}
         >
-          数字本身不动
+          <div style={{ fontFamily: SERIF_STACK, fontSize: 12, color: "#8a8b80", marginBottom: 8 }}>解释这串数字</div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontFamily: MONO_STACK }}>
+            <span>X:</span>
+            <b style={{ color: stamped ? color : "#26332e" }}>{firstRow}</b>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontFamily: MONO_STACK }}>
+            <span>Y:</span>
+            <b style={{ color: stamped ? color : "#26332e" }}>{secondRow}</b>
+          </div>
+          <div style={{ fontFamily: SERIF_STACK, fontSize: 12, color: "#8a8b80", marginTop: 8 }}>{footer}</div>
         </div>
-      </div>
 
-      <div
-        style={{
-          position: "absolute",
-          left: 310,
-          top: 116,
-          width: 260,
-          borderLeft: "1px solid rgba(47, 55, 49, 0.14)",
-          paddingLeft: 32,
-          fontSize: 15,
-          color: "#6f7368",
-          lineHeight: 1.9,
-          opacity: interpolate(revealProgress, [0.38, 0.7], [0, 1], clamp),
-          transform: `translateX(${interpolate(revealProgress, [0.38, 0.7], [24, 0], clamp)}px)`,
-        }}
-      >
-        <div style={{fontFamily: SERIF_STACK, fontSize: 12, color: "#8a8b80", marginBottom: 8}}>解释这串数字</div>
-        <div style={{display: "flex", justifyContent: "space-between", fontFamily: MONO_STACK}}>
-          <span>X:</span>
-          <b style={{color: stamped ? color : "#26332e"}}>{firstRow}</b>
+        <div
+          style={{
+            position: "absolute",
+            left: 38,
+            bottom: 34,
+            width: 310,
+            borderTop: "1px solid rgba(47, 55, 49, 0.12)",
+            paddingTop: 18,
+            fontFamily: SERIF_STACK,
+            fontSize: 26,
+            color: "#29342f",
+            fontWeight: 700,
+            opacity: interpolate(revealProgress, [0.66, 0.92], [0, 1], clamp),
+            transform: `translateY(${interpolate(revealProgress, [0.66, 0.92], [16, 0], clamp)}px)`,
+          }}
+        >
+          {title}
         </div>
-        <div style={{display: "flex", justifyContent: "space-between", fontFamily: MONO_STACK}}>
-          <span>Y:</span>
-          <b style={{color: stamped ? color : "#26332e"}}>{secondRow}</b>
-        </div>
-        <div style={{fontFamily: SERIF_STACK, fontSize: 12, color: "#8a8b80", marginTop: 8}}>{footer}</div>
-      </div>
 
-      <div
-        style={{
-          position: "absolute",
-          left: 38,
-          bottom: 34,
-          width: 310,
-          borderTop: "1px solid rgba(47, 55, 49, 0.12)",
-          paddingTop: 18,
-          fontFamily: SERIF_STACK,
-          fontSize: 26,
-          color: "#29342f",
-          fontWeight: 700,
-          opacity: interpolate(revealProgress, [0.66, 0.92], [0, 1], clamp),
-          transform: `translateY(${interpolate(revealProgress, [0.66, 0.92], [16, 0], clamp)}px)`,
-        }}
-      >
-        {title}
+        {stamped && <DrawnStamp progress={stampProgress} tone={tone} title={stampTitle} label={stampLabel} />}
+        <FocusBeam progress={beamProgress} tone={tone} />
       </div>
-
-      {stamped && <DrawnStamp progress={stampProgress} tone={tone} title={stampTitle} label={stampLabel} />}
-      <FocusBeam progress={beamProgress} tone={tone} />
-    </div>
-  );
-};
+    );
+  };
 
 const ProjectCard: React.FC<{
   x: number;
@@ -467,119 +467,119 @@ const ProjectCard: React.FC<{
   scale = 1,
   revealProgress = 1,
 }) => {
-  const color = tone === "source" ? "#4f745d" : "#315f6d";
-  const borderMuted = tone === "source" ? "rgba(79, 116, 93, 0.22)" : "rgba(49, 95, 109, 0.22)";
-  const bgHeader = tone === "source" ? "rgba(79, 116, 93, 0.08)" : "rgba(49, 95, 109, 0.08)";
+    const color = tone === "source" ? "#4f745d" : "#315f6d";
+    const borderMuted = tone === "source" ? "rgba(79, 116, 93, 0.22)" : "rgba(49, 95, 109, 0.22)";
+    const bgHeader = tone === "source" ? "rgba(79, 116, 93, 0.08)" : "rgba(49, 95, 109, 0.08)";
 
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: x,
-        top: y,
-        width: 460,
-        opacity,
-        transform: `scale(${scale})`,
-        transformOrigin: "center center",
-        backfaceVisibility: "hidden",
-        WebkitFontSmoothing: "antialiased",
-      }}
-    >
+    return (
       <div
         style={{
-          height: 44,
-          border: `1.5px solid ${borderMuted}`,
-          background: bgHeader,
-          color,
-          fontFamily: SERIF_STACK,
-          fontSize: 16,
-          fontWeight: 800,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: 12,
-        }}
-      >
-        {title}
-      </div>
-      <div
-        style={{
-          height: 340,
-          background: "rgba(255, 252, 244, 0.88)",
-          border: `1.5px solid ${borderMuted}`,
-          boxShadow: "0 26px 70px rgba(55, 48, 38, 0.12)",
-          padding: "24px 28px",
-          boxSizing: "border-box",
+          position: "absolute",
+          left: x,
+          top: y,
+          width: 460,
+          opacity,
+          transform: `scale(${scale})`,
+          transformOrigin: "center center",
+          backfaceVisibility: "hidden",
+          WebkitFontSmoothing: "antialiased",
         }}
       >
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            fontSize: 16,
-            opacity: interpolate(revealProgress, [0, 0.24], [0, 1], clamp),
-            transform: `translateY(${interpolate(revealProgress, [0, 0.24], [10, 0], clamp)}px)`,
-          }}
-        >
-          <span style={{color: "#8a8b80", fontFamily: SERIF_STACK}}>{tone === "source" ? "输入文件.shp" : "输出文件_new.shp"}</span>
-          <span style={{color, fontWeight: 800, fontFamily: SERIF_STACK}}>{status}</span>
-        </div>
-        <div
-          style={{
-            fontFamily: MONO_STACK,
-            fontSize: 56,
-            color: "#26332e",
-            fontWeight: 800,
-            marginTop: 24,
-            opacity: interpolate(revealProgress, [0.16, 0.42], [0, 1], clamp),
-            transform: `translateY(${interpolate(revealProgress, [0.16, 0.42], [18, 0], clamp)}px)`,
-          }}
-        >
-          {value}
-          <span style={{fontFamily: SERIF_STACK, color, fontSize: 44, marginLeft: 14}}>{valueUnit}</span>
-        </div>
-        <div
-          style={{
-            borderTop: "1px solid rgba(47, 55, 49, 0.12)",
-            marginTop: 20,
-            paddingTop: 14,
-            lineHeight: 1.8,
-            opacity: interpolate(revealProgress, [0.4, 0.72], [0, 1], clamp),
-            transform: `translateY(${interpolate(revealProgress, [0.4, 0.72], [16, 0], clamp)}px)`,
-          }}
-        >
-          <div style={{display: "flex", justifyContent: "space-between", height: 50, alignItems: "center"}}>
-            <span style={{fontSize: 22, color: "#6f7368", fontWeight: 700, fontFamily: SERIF_STACK}}>X 坐标:</span>
-            <b style={{fontSize: 44, fontFamily: MONO_STACK, color: "#26332e"}}>{xValue}</b>
-          </div>
-          <div style={{display: "flex", justifyContent: "space-between", height: 50, alignItems: "center", marginTop: 10}}>
-            <span style={{fontSize: 22, color: "#6f7368", fontWeight: 700, fontFamily: SERIF_STACK}}>Y 坐标:</span>
-            <b style={{fontSize: 44, fontFamily: MONO_STACK, color: "#26332e"}}>{yValue}</b>
-          </div>
-        </div>
-        <div
-          style={{
+            height: 44,
+            border: `1.5px solid ${borderMuted}`,
+            background: bgHeader,
+            color,
             fontFamily: SERIF_STACK,
-            fontSize: 15,
-            color: "#8a8b80",
-            marginTop: 22,
-            opacity: interpolate(revealProgress, [0.7, 1], [0, 1], clamp),
+            fontSize: 16,
+            fontWeight: 800,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: 12,
           }}
         >
-          {footer}
+          {title}
+        </div>
+        <div
+          style={{
+            height: 360,
+            background: "rgba(255, 252, 244, 0.88)",
+            border: `1.5px solid ${borderMuted}`,
+            boxShadow: "0 26px 70px rgba(55, 48, 38, 0.12)",
+            padding: "24px 28px",
+            boxSizing: "border-box",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              fontSize: 16,
+              opacity: interpolate(revealProgress, [0, 0.24], [0, 1], clamp),
+              transform: `translateY(${interpolate(revealProgress, [0, 0.24], [10, 0], clamp)}px)`,
+            }}
+          >
+            <span style={{ color: "#8a8b80", fontFamily: SERIF_STACK }}>{tone === "source" ? "输入文件.shp" : "输出文件_new.shp"}</span>
+            <span style={{ color, fontWeight: 800, fontFamily: SERIF_STACK }}>{status}</span>
+          </div>
+          <div
+            style={{
+              fontFamily: MONO_STACK,
+              fontSize: 56,
+              color: "#26332e",
+              fontWeight: 800,
+              marginTop: 18,
+              opacity: interpolate(revealProgress, [0.16, 0.42], [0, 1], clamp),
+              transform: `translateY(${interpolate(revealProgress, [0.16, 0.42], [18, 0], clamp)}px)`,
+            }}
+          >
+            {value}
+            <span style={{ fontFamily: SERIF_STACK, color, fontSize: 44, marginLeft: 14 }}>{valueUnit}</span>
+          </div>
+          <div
+            style={{
+              borderTop: "1px solid rgba(47, 55, 49, 0.12)",
+              marginTop: 18,
+              paddingTop: 12,
+              lineHeight: 1.8,
+              opacity: interpolate(revealProgress, [0.4, 0.72], [0, 1], clamp),
+              transform: `translateY(${interpolate(revealProgress, [0.4, 0.72], [16, 0], clamp)}px)`,
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", height: 46, alignItems: "center" }}>
+              <span style={{ fontSize: 22, color: "#6f7368", fontWeight: 700, fontFamily: SERIF_STACK }}>X 坐标:</span>
+              <b style={{ fontSize: 44, fontFamily: MONO_STACK, color: "#26332e" }}>{xValue}</b>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", height: 46, alignItems: "center", marginTop: 8 }}>
+              <span style={{ fontSize: 22, color: "#6f7368", fontWeight: 700, fontFamily: SERIF_STACK }}>Y 坐标:</span>
+              <b style={{ fontSize: 44, fontFamily: MONO_STACK, color: "#26332e" }}>{yValue}</b>
+            </div>
+          </div>
+          <div
+            style={{
+              fontFamily: SERIF_STACK,
+              fontSize: 15,
+              color: "#8a8b80",
+              marginTop: 16,
+              opacity: interpolate(revealProgress, [0.7, 1], [0, 1], clamp),
+            }}
+          >
+            {footer}
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
-const MathEngine: React.FC<{frame: number; mode: "money" | "projection"}> = ({frame, mode}) => {
+const MathEngine: React.FC<{ frame: number; mode: "money" | "projection" }> = ({ frame, mode }) => {
   const spin = frame * 0.5;
   const pulse = interpolate(Math.sin(frame / 18), [-1, 1], [0.16, 0.28]);
 
   return (
-    <div style={{position: "absolute", left: 0, top: 0, width: 280, height: 220, textAlign: "center"}}>
-      <svg width="280" height="220" viewBox="0 0 280 220" style={{overflow: "visible"}}>
+    <div style={{ position: "absolute", left: 0, top: 0, width: 280, height: 220, textAlign: "center" }}>
+      <svg width="280" height="220" viewBox="0 0 280 220" style={{ overflow: "visible" }}>
         {/* Outermost glowing thin circle with nodes */}
         <circle
           cx="140"
@@ -648,10 +648,10 @@ const MathEngine: React.FC<{frame: number; mode: "money" | "projection"}> = ({fr
           </text>
         </g>
       </svg>
-      <div style={{fontFamily: MONO_STACK, color: "#a77748", fontSize: 15, fontWeight: 800, marginTop: 12}}>
+      <div style={{ fontFamily: MONO_STACK, color: "#a77748", fontSize: 15, fontWeight: 800, marginTop: 12 }}>
         {mode === "money" ? "汇率换算公式" : "投影转换公式"}
       </div>
-      <div style={{fontSize: 24, color: "#29342f", fontWeight: 700, marginTop: 8}}>
+      <div style={{ fontSize: 24, color: "#29342f", fontWeight: 700, marginTop: 8 }}>
         {mode === "money" ? "$100 -> ¥679" : "经纬度 -> 平面米"}
       </div>
     </div>
@@ -663,7 +663,7 @@ const Packet: React.FC<{
   opacity: number;
   label: string;
   color: string;
-}> = ({progress, opacity, label, color}) => {
+}> = ({ progress, opacity, label, color }) => {
   const startX = 620;
   const endX = 1300;
   const currentX = interpolate(progress, [0, 1], [startX, endX]);
@@ -734,7 +734,7 @@ const Packet: React.FC<{
 };
 
 export const GISComparison: React.FC = () => {
-  const {fps: videoFps} = useVideoConfig();
+  const { fps: videoFps } = useVideoConfig();
   const rawFrame = useCurrentFrame();
   const frame = rawFrame * (30 / videoFps);
   const fps = 30;
@@ -742,17 +742,17 @@ export const GISComparison: React.FC = () => {
   const phase1Opacity = fade(frame, 0, 1513);
   const phase2Opacity = fade(frame, 1513, 3376);
 
-  const title1 = spring({frame: frame - 20, fps, config: {damping: 18, stiffness: 80}});
-  const title2 = spring({frame: frame - 1530, fps, config: {damping: 18, stiffness: 80}});
+  const title1 = spring({ frame: frame - 20, fps, config: { damping: 18, stiffness: 80 } });
+  const title2 = spring({ frame: frame - 1530, fps, config: { damping: 18, stiffness: 80 } });
 
-  const gisStamp = spring({frame: frame - 690, fps, config: {damping: 11, stiffness: 120}});
-  const moneyStamp = spring({frame: frame - 1162, fps, config: {damping: 11, stiffness: 120}});
+  const gisStamp = spring({ frame: frame - 690, fps, config: { damping: 11, stiffness: 120 } });
+  const moneyStamp = spring({ frame: frame - 1162, fps, config: { damping: 11, stiffness: 120 } });
   const isGisStamped = frame >= 696;
   const isMoneyStamped = frame >= 1168;
 
-  const gisAppear = spring({frame: frame - 120, fps, config: {damping: 18, stiffness: 82}});
+  const gisAppear = spring({ frame: frame - 120, fps, config: { damping: 18, stiffness: 82 } });
   const gisMoveLeft = softStep(frame, 780, 930);
-  const moneyAppear = spring({frame: frame - 930, fps, config: {damping: 18, stiffness: 82}});
+  const moneyAppear = spring({ frame: frame - 930, fps, config: { damping: 18, stiffness: 82 } });
   const moneyMoveRight = softStep(frame, 1240, 1380);
   const gisReveal = softStep(frame, 155, 430);
   const moneyReveal = softStep(frame, 950, 1190);
@@ -770,10 +770,10 @@ export const GISComparison: React.FC = () => {
 
   const warningOpacity = interpolate(frame, [1300, 1320, 1490, 1510], [0, 1, 1, 0], clamp);
 
-  const cardEntry = spring({frame: frame - 1528, fps, config: {damping: 18, stiffness: 82}});
-  const sourceCardIn = spring({frame: frame - 1600, fps, config: {damping: 18, stiffness: 82}});
-  const engineIn = spring({frame: frame - 1810, fps, config: {damping: 16, stiffness: 90}});
-  const targetCardIn = spring({frame: frame - 2070, fps, config: {damping: 18, stiffness: 82}});
+  const cardEntry = spring({ frame: frame - 1528, fps, config: { damping: 18, stiffness: 82 } });
+  const sourceCardIn = spring({ frame: frame - 1600, fps, config: { damping: 18, stiffness: 82 } });
+  const engineIn = spring({ frame: frame - 1810, fps, config: { damping: 16, stiffness: 90 } });
+  const targetCardIn = spring({ frame: frame - 2070, fps, config: { damping: 18, stiffness: 82 } });
   const sourceReveal = softStep(frame, 1620, 1810);
   const targetReveal = softStep(frame, 2090, 2290);
   const engineMode = frame < 2400 ? "money" : "projection";
@@ -783,9 +783,9 @@ export const GISComparison: React.FC = () => {
   const packetCoordProgress = interpolate(frame, [2610, 2840], [0, 1], clamp);
   const packetCoordOpacity = interpolate(frame, [2602, 2612, 2838, 2852], [0, 1, 1, 0], clamp);
 
-  const cnySpring = spring({frame: frame - 2232, fps, config: {damping: 16, stiffness: 75}});
-  const coordSpring = spring({frame: frame - 2840, fps, config: {damping: 16, stiffness: 75}});
-  const swapSpring = spring({frame: frame - 2960, fps, config: {damping: 16, stiffness: 75}});
+  const cnySpring = spring({ frame: frame - 2232, fps, config: { damping: 16, stiffness: 75 } });
+  const coordSpring = spring({ frame: frame - 2840, fps, config: { damping: 16, stiffness: 75 } });
+  const swapSpring = spring({ frame: frame - 2960, fps, config: { damping: 16, stiffness: 75 } });
 
   const displayCNY = Math.round(interpolate(cnySpring, [0, 1], [100, 679]));
   const mercatorX = Math.round(interpolate(coordSpring, [0, 1], [121, 13469903]));
@@ -798,12 +798,12 @@ export const GISComparison: React.FC = () => {
   const underline2 = softStep(frame, 1620, 1705);
 
   return (
-    <AbsoluteFill style={{fontFamily: SERIF_STACK, color: "#29342f", overflow: "hidden"}}>
+    <AbsoluteFill style={{ fontFamily: SERIF_STACK, color: "#29342f", overflow: "hidden" }}>
       <PaperBackground tone={frame > 1513 ? "warm" : "light"} />
       <TopCode text="DEFINE PROJECTION / PROJECT" active />
 
       {frame >= 0 && frame < 1513 && (
-        <AbsoluteFill style={{opacity: phase1Opacity}}>
+        <AbsoluteFill style={{ opacity: phase1Opacity }}>
           <div
             style={{
               opacity: interpolate(title1, [0, 1], [0, 1]),
@@ -814,7 +814,7 @@ export const GISComparison: React.FC = () => {
               eyebrow="PART 01 / DEFINE PROJECTION"
               title={
                 <>
-                  定义投影 = <span style={{color: "#4f745d"}}>贴标签</span>
+                  定义投影 = <span style={{ color: "#4f745d" }}>贴标签</span>
                 </>
               }
               subtitle="声明这串数字原本代表什么；底层数字不重新计算"
@@ -936,10 +936,10 @@ export const GISComparison: React.FC = () => {
               transform: `translateX(-50%) scale(${summaryPulse})`,
             }}
           >
-            <div style={{fontSize: 30, fontWeight: 700, color: "#8f4e3e"}}>
+            <div style={{ fontSize: 30, fontWeight: 700, color: "#8f4e3e" }}>
               注意：定义投影没有改数据，只是补说明。
             </div>
-            <div style={{fontFamily: SERIF_STACK, fontSize: 14, color: "#6f7368", marginTop: 10}}>
+            <div style={{ fontFamily: SERIF_STACK, fontSize: 14, color: "#6f7368", marginTop: 10 }}>
               纸上仍然是 100；GIS 底层仍然是 121 和 31。变化的是“如何解释它们”。
             </div>
           </div>
@@ -947,7 +947,7 @@ export const GISComparison: React.FC = () => {
       )}
 
       {frame >= 1513 && frame < 3376 && (
-        <AbsoluteFill style={{opacity: phase2Opacity}}>
+        <AbsoluteFill style={{ opacity: phase2Opacity }}>
           <div
             style={{
               opacity: interpolate(title2, [0, 1], [0, 1]),
@@ -958,7 +958,7 @@ export const GISComparison: React.FC = () => {
               eyebrow="PART 02 / PROJECT"
               title={
                 <>
-                  投影 = <span style={{color: "#315f6d"}}>重算数字</span>
+                  投影 = <span style={{ color: "#315f6d" }}>重算数字</span>
                 </>
               }
               subtitle="读取源坐标系，经过转换公式，写出一份全新的坐标文件"
@@ -983,7 +983,7 @@ export const GISComparison: React.FC = () => {
               transform: `translateY(${interpolate(cardEntry, [0, 1], [52, 0])}px)`,
             }}
           >
-            <svg width="1920" height="1080" viewBox="0 0 1920 1080" style={{position: "absolute", inset: 0, overflow: "visible"}}>
+            <svg width="1920" height="1080" viewBox="0 0 1920 1080" style={{ position: "absolute", inset: 0, overflow: "visible" }}>
               <path
                 d="M640 540 C 760 490, 840 490, 960 540 S 1160 590, 1280 540"
                 fill="none"
@@ -1105,12 +1105,12 @@ export const GISComparison: React.FC = () => {
             {frame < 2400 ? (
               <>
                 就像把 100 美元换成人民币：经过汇率公式之后，
-                <span style={{color: "#315f6d"}}> 到手数字从 100 变成 679。</span>
+                <span style={{ color: "#315f6d" }}> 到手数字从 100 变成 679。</span>
               </>
             ) : (
               <>
                 投影转换也是这样：
-                <span style={{color: "#315f6d"}}> 坐标数字会被全部重新计算并写入新文件。</span>
+                <span style={{ color: "#315f6d" }}> 坐标数字会被全部重新计算并写入新文件。</span>
                 不同投影算法，输出的平面米制数值也不同。
               </>
             )}
