@@ -426,13 +426,13 @@ const DefineProjectPanel: React.FC = () => {
 
   // Tag Projection card variables
   const tagRightOpacity = interpolate(tagProgress, [0.6, 1], [0, 1], clamp);
-  const tagRightX = interpolate(tagProgress, [0.6, 1], [276, 288], clamp);
+  const tagShiftX = interpolate(tagProgress, [0.6, 1], [-12, 0], clamp);
   const tagArrowDashOffset = 32 * (1 - tagProgress);
   const tagArrowheadOpacity = interpolate(tagProgress, [0.8, 1], [0, 1], clamp);
 
   // Project card variables
   const rightOpacity = interpolate(projectProgress, [0.6, 1], [0, 1], clamp);
-  const rightX = interpolate(projectProgress, [0.6, 1], [244, 260], clamp);
+  const shiftX = interpolate(projectProgress, [0.6, 1], [-16, 0], clamp);
   const arrowDashOffset = 58 * (1 - projectProgress);
   const arrowheadOpacity = interpolate(projectProgress, [0.8, 1], [0, 1], clamp);
 
@@ -488,14 +488,17 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x={tagRightX}
+              x="288"
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
               fontSize="18"
               fontWeight="800"
               fill="#10b981"
-              style={{ opacity: tagRightOpacity }}
+              style={{
+                opacity: tagRightOpacity,
+                transform: `translateX(${tagShiftX}px)`,
+              }}
             >
               120.50°E, 31.20°N
             </text>
@@ -539,14 +542,17 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x={rightX}
+              x="260"
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
               fontSize="24"
               fontWeight="800"
               fill="#8f4e3e"
-              style={{ opacity: rightOpacity }}
+              style={{
+                opacity: rightOpacity,
+                transform: `translateX(${shiftX}px)`,
+              }}
             >
               408522
             </text>
@@ -796,11 +802,23 @@ const VertexDiagram: React.FC<{ enter: number }> = ({ enter }) => {
         {pts.map((p, idx) => {
           const x = interpolate(move, [0, 1], [p.x, p.nx], clamp);
           const y = interpolate(move, [0, 1], [p.y, p.ny], clamp);
+          const dx = x - p.x;
+          const dy = y - p.y;
           return (
             <g key={`vertex-${idx}`}>
               <path d={`M ${p.x} ${p.y} L ${p.nx} ${p.ny}`} stroke="#a77748" strokeWidth="2" strokeDasharray="7 7" opacity="0.55" />
               <circle cx={x} cy={y} r="9" fill="#fffdf8" stroke="#315f6d" strokeWidth="4" />
-              <text x={x + 13} y={y - 11} fontFamily={MONO_STACK} fontSize="18" fontWeight="800" fill="#315f6d">
+              <text
+                x={p.x + 13}
+                y={p.y - 11}
+                fontFamily={MONO_STACK}
+                fontSize="18"
+                fontWeight="800"
+                fill="#315f6d"
+                style={{
+                  transform: `translate(${dx}px, ${dy}px)`,
+                }}
+              >
                 V{idx + 1}
               </text>
             </g>
