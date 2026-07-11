@@ -31,16 +31,18 @@ const Float: React.FC<{
   rotateAmplitude?: number;
   delay?: number;
   style?: React.CSSProperties;
-}> = ({ children, speed = 60, amplitude = 6, rotateAmplitude = 0.5, delay = 0, style }) => {
+}> = ({ children, speed = 60, amplitude = 6, delay = 0, style }) => {
   const frame = useCurrentFrame();
   const t = frame + delay;
-  const y = Math.sin(t / speed) * amplitude;
-  const r = Math.cos(t / (speed * 1.2)) * rotateAmplitude;
+  const y = Math.round(Math.sin(t / speed) * amplitude);
   return (
     <div
       style={{
         ...style,
-        transform: `${style?.transform || ""} translateY(${y}px) rotate(${r}deg)`,
+        transform: `${style?.transform || ""} translate3d(0, ${y}px, 0)`,
+        willChange: "transform",
+        backfaceVisibility: "hidden" as const,
+        WebkitFontSmoothing: "antialiased",
       }}
     >
       {children}
@@ -488,17 +490,14 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x="288"
+              x={Math.round(288 + tagShiftX)}
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
               fontSize="18"
               fontWeight="800"
               fill="#10b981"
-              style={{
-                opacity: tagRightOpacity,
-                transform: `translateX(${tagShiftX}px)`,
-              }}
+              style={{ opacity: tagRightOpacity }}
             >
               120.50°E, 31.20°N
             </text>
@@ -542,17 +541,14 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x="260"
+              x={Math.round(260 + shiftX)}
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
               fontSize="24"
               fontWeight="800"
               fill="#8f4e3e"
-              style={{
-                opacity: rightOpacity,
-                transform: `translateX(${shiftX}px)`,
-              }}
+              style={{ opacity: rightOpacity }}
             >
               408522
             </text>
