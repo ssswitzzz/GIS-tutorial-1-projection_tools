@@ -3,7 +3,6 @@ import {
   AbsoluteFill,
   continueRender,
   delayRender,
-  Easing,
   interpolate,
   spring,
   staticFile,
@@ -21,7 +20,7 @@ const clamp = {
   extrapolateRight: "clamp" as const,
 };
 
-const ease = Easing.bezier(0.22, 1, 0.36, 1);
+// const ease = Easing.bezier(0.22, 1, 0.36, 1);
 
 // Lottie player helper component
 const LottiePlayer: React.FC<{
@@ -249,7 +248,7 @@ export const CurrencyExchangeScene: React.FC = () => {
 
   // Gear Rotation inside the machine during processing (2740 - 3250)
   const isProcessing = frame > 2740 && frame < 3250;
-  const gearRotation = isProcessing ? frame * 4 : 0;
+  // const gearRotation = isProcessing ? frame * 4 : 0;
 
   // HUD & Narrative Title Banners (Refined and Concised GIS Concept Summaries)
   const textOpacity90 = interpolate(frame, [490, 510, 750, 770], [0, 1, 1, 0], clamp);
@@ -402,7 +401,7 @@ export const CurrencyExchangeScene: React.FC = () => {
               
               {/* Subtitle 90-91 */}
               <div style={{ position: "absolute", opacity: textOpacity90, textAlign: "center", transform: `translateY(${interpolate(textOpacity90, [0, 1], [15, 0])}px)` }}>
-                <h2 style={{ fontSize: 44, fontWeight: 800, color: "#4f745d" }}>什么是【投影转换】 (Project)？</h2>
+                <h2 style={{ fontSize: 44, fontWeight: 800, color: "#4f745d" }}>什么是【投影】 (Project)？</h2>
                 <p style={{ fontFamily: MONO_STACK, fontSize: 24, color: "#7a766c", marginTop: 10 }}>将它类比为自助换汇：必须声明“源币种”才能换算汇率</p>
               </div>
 

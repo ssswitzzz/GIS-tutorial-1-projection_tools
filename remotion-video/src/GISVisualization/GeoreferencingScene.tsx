@@ -108,9 +108,11 @@ export const GeoreferencingScene: React.FC = () => {
   const rightPanelX = interpolate(rightEntry, [0, 1], [1920, rightCenterX], clamp);
   const rightPanelOpacity = interpolate(rightEntry, [0, 1], [0, 1], clamp) * mapsOpacity;
 
-  // Vector card visual (Phase 2: Sub 118-121)
-  const vectorCardShow = frame >= 514 && frame < 844;
-  const vectorCardOpacity = fade(frame, 514, 844, 15, 15);
+  // Vector metadata visual (Phase 2: Sub 118-121)
+  const vectorCardShow = frame >= 478 && frame < 844;
+  const vectorCardOpacity = fade(frame, 478, 844, 18, 18);
+  const vectorDiagramProgress = interpolate(frame, [510, 620], [0, 1], clamp);
+  const vectorPrjPulse = interpolate(Math.sin(frame / 14), [-1, 1], [0.35, 1]);
   
   // ==================== 3. GROUND CONTROL POINTS (GCPs) ====================
   // Landmark coordinates inside 600x450 panels (offset from local center 300, 225)
@@ -467,47 +469,105 @@ export const GeoreferencingScene: React.FC = () => {
           </div>
         )}
 
-        {/* ==================== VECTOR CARD VISUAL (PHASE 2: Sub 118-121) ==================== */}
+        {/* ==================== VECTOR METADATA VISUAL (PHASE 2: Sub 118-121) ==================== */}
         {vectorCardShow && (
           <div
             style={{
               position: "absolute",
-              left: 1040,
-              top: centerY,
-              transform: "translate(-50%, -50%)",
-              width: 520,
-              height: 280,
-              background: "white",
-              border: "1px dashed rgba(49, 95, 109, 0.4)",
-              borderRadius: 16,
-              boxShadow: "0 15px 35px rgba(0, 0, 0, 0.04)",
+              left: 1160,
+              top: centerY + 10,
+              transform: `translate(-50%, -50%) translateY(${interpolate(vectorCardOpacity, [0, 1], [18, 0])}px)`,
+              width: 660,
+              height: 330,
+              background: "rgba(255, 255, 255, 0.94)",
+              border: "1px solid rgba(49, 95, 109, 0.16)",
+              borderRadius: 14,
+              boxShadow: "0 18px 40px rgba(49, 95, 109, 0.08)",
               opacity: vectorCardOpacity,
               display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              padding: 24,
+              gap: 22,
+              padding: 26,
               boxSizing: "border-box",
               zIndex: 8,
             }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontFamily: MONO_STACK, fontSize: 13, color: "#475569", fontWeight: "bold" }}>vector_data.shp</span>
-              <span style={{ fontSize: 12, color: "#10b981", fontWeight: "bold", fontFamily: MONO_STACK }}>✓ CRS PRE-SET</span>
-            </div>
-            
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, margin: "16px 0" }}>
-              <div style={{ fontSize: 20, fontWeight: "bold", color: "#1f2937" }}>
-                📐 矢量图层 (Vector Layer)
+            <div style={{ width: 250, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ fontFamily: MONO_STACK, fontSize: 13, color: "#64748b", fontWeight: 800, letterSpacing: 0 }}>
+                矢量数据包
               </div>
-              <div style={{ fontSize: 14, color: "#6b7280", lineHeight: 1.5 }}>
-                绝大多数矢量边界在生成与打包时，都已内置并关联了投影信息说明。因此极少遇到没有坐标系的问题。
+
+              {[
+                { name: "boundary.shp", note: "几何图形", color: "#315f6d" },
+                { name: "boundary.dbf", note: "属性表", color: "#64748b" },
+                { name: "boundary.prj", note: "投影说明", color: "#10b981" },
+              ].map((item, idx) => (
+                <div
+                  key={item.name}
+                  style={{
+                    height: 58,
+                    border: `2px solid ${item.color}`,
+                    borderRadius: 8,
+                    background: idx === 2 ? "rgba(236, 253, 245, 0.95)" : "#ffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "0 14px",
+                    boxSizing: "border-box",
+                    fontFamily: MONO_STACK,
+                    transform: `translateX(${interpolate(vectorDiagramProgress, [0, 1], [24 * (idx + 1), 0])}px)`,
+                    opacity: interpolate(vectorDiagramProgress, [0, 0.25 + idx * 0.18, 1], [0, 1, 1], clamp),
+                    boxShadow: idx === 2 ? `0 0 ${interpolate(vectorPrjPulse, [0, 1], [0, 18])}px rgba(16, 185, 129, 0.22)` : "none",
+                  }}
+                >
+                  <span style={{ fontSize: 15, fontWeight: 800, color: item.color }}>{item.name}</span>
+                  <span style={{ fontSize: 11, color: "#94a3b8", textTransform: "uppercase" }}>{item.note}</span>
+                </div>
+              ))}
+
+              <div style={{ fontSize: 13, color: "#475569", lineHeight: 1.55 }}>
+                矢量数据通常和投影说明一起分发，所以很少需要反推原始坐标系。
               </div>
             </div>
-            
-            <div style={{ height: 2, background: "#f3f4f6" }} />
-            <div style={{ display: "flex", gap: 10, fontSize: 12, fontFamily: MONO_STACK, color: "#9ca3af" }}>
-              <span>WGS 84 / UTM ZONE 51N</span>
-            </div>
+
+            <svg width="330" height="278" viewBox="0 0 330 278" style={{ flex: 1, overflow: "visible" }}>
+              <defs>
+                <marker id="vector-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" />
+                </marker>
+              </defs>
+
+              <rect x="38" y="26" width="222" height="82" rx="12" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2" />
+              <text x="149" y="56" textAnchor="middle" fontFamily={MONO_STACK} fontSize="13" fontWeight="800" fill="#315f6d">
+                CRS 元数据
+              </text>
+              <text x="149" y="82" textAnchor="middle" fontFamily={MONO_STACK} fontSize="12" fill="#64748b">
+                WGS 84 / UTM ZONE 51N
+              </text>
+              <text x="149" y="98" textAnchor="middle" fontFamily={MONO_STACK} fontSize="10" fill="#94a3b8">
+                保存在 .prj
+              </text>
+
+              <path
+                d="M 0 179 C 74 179 73 67 38 67"
+                fill="none"
+                stroke="#10b981"
+                strokeWidth="4"
+                strokeDasharray="8 8"
+                strokeDashoffset={interpolate(vectorDiagramProgress, [0, 1], [60, 0])}
+                markerEnd="url(#vector-arrow)"
+                opacity={interpolate(vectorDiagramProgress, [0.25, 1], [0, 1], clamp)}
+              />
+
+              <rect x="62" y="154" width="230" height="96" rx="12" fill="#f0fdf4" stroke="#059669" strokeWidth="2" />
+              <path d="M 84 216 C 128 186 169 230 212 202 S 260 183 278 197" fill="none" stroke="#2563eb" strokeWidth="5" />
+              <path d="M 108 164 L 108 244" stroke="#475569" strokeWidth="3" />
+              <path d="M 74 190 L 282 190" stroke="#475569" strokeWidth="3" />
+              <circle cx="232" cy="178" r="12" fill="#10b981" fillOpacity="0.38" stroke="#047857" strokeWidth="2" />
+              <rect x="214" y="214" width="22" height="22" rx="3" fill="#3b82f6" fillOpacity="0.35" stroke="#2563eb" strokeWidth="2" />
+              <text x="177" y="274" textAnchor="middle" fontFamily={MONO_STACK} fontSize="12" fontWeight="800" fill="#059669">
+                坐标系随图层一起分发
+              </text>
+            </svg>
           </div>
         )}
 
@@ -619,7 +679,7 @@ export const GeoreferencingScene: React.FC = () => {
             >
               <span style={{ fontSize: 24, marginRight: 16 }}>🔍</span>
               <div style={{ flex: 1, fontFamily: MONO_STACK, fontSize: 22, fontWeight: "bold", color: "#374151", display: "flex", alignItems: "center" }}>
-                ArcGIS 地理配准
+                ArcGIS 地理配准教程
                 {cursorBlink && <span style={{ marginLeft: 2, width: 3, height: 26, background: "#7c3aed" }} />}
               </div>
               <span style={{ color: "#7c3aed", fontFamily: MONO_STACK, fontSize: 15, fontWeight: "bold" }}>ENTER</span>
@@ -631,39 +691,39 @@ export const GeoreferencingScene: React.FC = () => {
               <div style={{ opacity: resultOpacity1, transform: `translateY(${interpolate(resultOpacity1, [0, 1], [15, 0])}px)`, padding: "18px 24px", border: "1px solid #e5e7eb", borderRadius: 16, background: "#ffffff", boxShadow: "0 4px 12px rgba(0,0,0,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <h4 style={{ fontSize: 18, fontWeight: "bold", color: "#2563eb", textDecoration: "underline", cursor: "pointer" }}>
-                    如何在 ArcGIS Pro 中对栅格数据进行地理配准 (Georeferencing)
+                    ArcGIS Pro 地理配准 xxxx 教程
                   </h4>
                   <p style={{ fontSize: 13, color: "#4b5563", marginTop: 6, fontFamily: MONO_STACK }}>
-                    第1步：添加栅格 ➡️ 第2步：添加控制点 (Control Points) ➡️ 第3步：保存并更新配准...
+                    第1步：添加 xxxx 栅格；第2步：添加控制点；第3步：保存 xxxx...
                   </p>
                 </div>
-                <span style={{ fontSize: 12, fontFamily: MONO_STACK, color: "#10b981", background: "#ecfdf5", padding: "4px 10px", borderRadius: 12 }}>99.8% 相关度</span>
+                <span style={{ fontSize: 12, fontFamily: MONO_STACK, color: "#10b981", background: "#ecfdf5", padding: "4px 10px", borderRadius: 12 }}>99.8% 相关</span>
               </div>
 
               {/* Result 2 */}
               <div style={{ opacity: resultOpacity2, transform: `translateY(${interpolate(resultOpacity2, [0, 1], [15, 0])}px)`, padding: "18px 24px", border: "1px solid #e5e7eb", borderRadius: 16, background: "#ffffff", boxShadow: "0 4px 12px rgba(0,0,0,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <h4 style={{ fontSize: 18, fontWeight: "bold", color: "#2563eb", textDecoration: "underline", cursor: "pointer" }}>
-                    QGIS地理配准插件使用指南 (从零开始的零基础详细操作)
+                    QGIS 地理配准工具 xxxx 使用指南
                   </h4>
                   <p style={{ fontSize: 13, color: "#4b5563", marginTop: 6, fontFamily: MONO_STACK }}>
-                    打开栅格配准工具，导入无参考底图，在已知WGS84投影图层上逐一打点映射...
+                    打开 xxxx 工具，导入 xxxx 栅格，在已知 CRS 图层上逐一打点...
                   </p>
                 </div>
-                <span style={{ fontSize: 12, fontFamily: MONO_STACK, color: "#10b981", background: "#ecfdf5", padding: "4px 10px", borderRadius: 12 }}>97.5% 相关度</span>
+                <span style={{ fontSize: 12, fontFamily: MONO_STACK, color: "#10b981", background: "#ecfdf5", padding: "4px 10px", borderRadius: 12 }}>97.5% 相关</span>
               </div>
 
               {/* Result 3 */}
               <div style={{ opacity: resultOpacity3, transform: `translateY(${interpolate(resultOpacity3, [0, 1], [15, 0])}px)`, padding: "18px 24px", border: "1px solid #e5e7eb", borderRadius: 16, background: "#ffffff", boxShadow: "0 4px 12px rgba(0,0,0,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <h4 style={{ fontSize: 18, fontWeight: "bold", color: "#2563eb", textDecoration: "underline", cursor: "pointer" }}>
-                    【视频教程】地理配准手把手打点实战演示 (Bilibili热门)
+                    【视频】地理配准 xxxx 控制点演示
                   </h4>
                   <p style={{ fontSize: 13, color: "#4b5563", marginTop: 6, fontFamily: MONO_STACK }}>
-                    UP主：GISer科普君 ∙ 播放量: 10w+ ∙ 配准实战案例讲解与几何参数校正...
+                    作者：xxxxx；播放量：xx万；xxxx 案例演示与参数设置...
                   </p>
                 </div>
-                <span style={{ fontSize: 12, fontFamily: MONO_STACK, color: "#3b82f6", background: "#eff6ff", padding: "4px 10px", borderRadius: 12 }}>热门推荐</span>
+                <span style={{ fontSize: 12, fontFamily: MONO_STACK, color: "#3b82f6", background: "#eff6ff", padding: "4px 10px", borderRadius: 12 }}>示例</span>
               </div>
             </div>
           </div>

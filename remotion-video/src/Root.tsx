@@ -6,6 +6,7 @@ import { OpeningScene } from "./GISVisualization/OpeningScene";
 import { CurrencyExchangeScene } from "./GISVisualization/CurrencyExchangeScene";
 import { GeoreferencingScene } from "./GISVisualization/GeoreferencingScene";
 import { ProjectRasterScene } from "./GISVisualization/ProjectRasterScene";
+import { ClosingSummaryScene } from "./GISVisualization/ClosingSummaryScene";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -22,6 +23,14 @@ export const RemotionRoot: React.FC = () => {
         id="GeoreferencingScene"
         component={GeoreferencingScene}
         durationInFrames={2662}
+        fps={60}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="ClosingSummaryScene"
+        component={ClosingSummaryScene}
+        durationInFrames={3400}
         fps={60}
         width={1920}
         height={1080}
