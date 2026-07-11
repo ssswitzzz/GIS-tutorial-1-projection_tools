@@ -19,6 +19,31 @@ const clamp = {
 
 const ease = Easing.bezier(0.22, 1, 0.36, 1);
 
+// Float Component for floating/breathing animation
+const Float: React.FC<{
+  children: React.ReactNode;
+  speed?: number;
+  amplitude?: number;
+  rotateAmplitude?: number;
+  delay?: number;
+  style?: React.CSSProperties;
+}> = ({ children, speed = 60, amplitude = 6, rotateAmplitude = 0.5, delay = 0, style }) => {
+  const frame = useCurrentFrame();
+  const t = frame + delay;
+  const y = Math.sin(t / speed) * amplitude;
+  const r = Math.cos(t / (speed * 1.2)) * rotateAmplitude;
+  return (
+    <div
+      style={{
+        ...style,
+        transform: `${style?.transform || ""} translateY(${y}px) rotate(${r}deg)`,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
 const fade = (frame: number, start: number, end: number, fadeIn = 18, fadeOut = 18) =>
   interpolate(frame, [start, start + fadeIn, end - fadeOut, end], [0, 1, 1, 0], clamp);
 
@@ -441,13 +466,16 @@ const ProjectCard: React.FC<{
   revealProgress = 1,
 }) => {
   const color = tone === "source" ? "#4f745d" : "#315f6d";
+  const borderMuted = tone === "source" ? "rgba(79, 116, 93, 0.22)" : "rgba(49, 95, 109, 0.22)";
+  const bgHeader = tone === "source" ? "rgba(79, 116, 93, 0.08)" : "rgba(49, 95, 109, 0.08)";
+
   return (
     <div
       style={{
         position: "absolute",
         left: x,
         top: y,
-        width: 420,
+        width: 440,
         opacity,
         transform: `scale(${scale})`,
         transformOrigin: "center center",
@@ -455,28 +483,28 @@ const ProjectCard: React.FC<{
     >
       <div
         style={{
-          height: 30,
-          border: `1px solid ${tone === "source" ? "rgba(79, 116, 93, 0.26)" : "rgba(49, 95, 109, 0.26)"}`,
-          background: tone === "source" ? "rgba(79, 116, 93, 0.08)" : "rgba(49, 95, 109, 0.08)",
+          height: 44,
+          border: `1.5px solid ${borderMuted}`,
+          background: bgHeader,
           color,
           fontFamily: MONO_STACK,
-          fontSize: 12,
+          fontSize: 16,
           fontWeight: 800,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          marginBottom: 14,
+          marginBottom: 12,
         }}
       >
         {title}
       </div>
       <div
         style={{
-          height: 274,
+          height: 300,
           background: "rgba(255, 252, 244, 0.88)",
-          border: `1px solid ${tone === "source" ? "rgba(79, 116, 93, 0.26)" : "rgba(49, 95, 109, 0.28)"}`,
+          border: `1.5px solid ${borderMuted}`,
           boxShadow: "0 26px 70px rgba(55, 48, 38, 0.12)",
-          padding: 30,
+          padding: "24px 28px",
           boxSizing: "border-box",
         }}
       >
@@ -485,7 +513,7 @@ const ProjectCard: React.FC<{
             display: "flex",
             justifyContent: "space-between",
             fontFamily: MONO_STACK,
-            fontSize: 13,
+            fontSize: 16,
             opacity: interpolate(revealProgress, [0, 0.24], [0, 1], clamp),
             transform: `translateY(${interpolate(revealProgress, [0, 0.24], [10, 0], clamp)}px)`,
           }}
@@ -496,43 +524,41 @@ const ProjectCard: React.FC<{
         <div
           style={{
             fontFamily: MONO_STACK,
-            fontSize: 50,
+            fontSize: 56,
             color: "#26332e",
             fontWeight: 800,
-            marginTop: 36,
+            marginTop: 24,
             opacity: interpolate(revealProgress, [0.16, 0.42], [0, 1], clamp),
             transform: `translateY(${interpolate(revealProgress, [0.16, 0.42], [18, 0], clamp)}px)`,
           }}
         >
           {value}
-          <span style={{fontFamily: SERIF_STACK, color, fontSize: 42, marginLeft: 14}}>{valueUnit}</span>
+          <span style={{fontFamily: SERIF_STACK, color, fontSize: 44, marginLeft: 14}}>{valueUnit}</span>
         </div>
         <div
           style={{
             borderTop: "1px solid rgba(47, 55, 49, 0.12)",
-            marginTop: 26,
-            paddingTop: 18,
+            marginTop: 20,
+            paddingTop: 14,
             fontFamily: MONO_STACK,
-            fontSize: 13,
-            color: "#6f7368",
             lineHeight: 1.8,
             opacity: interpolate(revealProgress, [0.4, 0.72], [0, 1], clamp),
             transform: `translateY(${interpolate(revealProgress, [0.4, 0.72], [16, 0], clamp)}px)`,
           }}
         >
-          <div style={{display: "flex", justifyContent: "space-between"}}>
-            <span>X 坐标:</span>
-            <b style={{color: "#26332e"}}>{xValue}</b>
+          <div style={{display: "flex", justifyContent: "space-between", height: 32, alignItems: "center"}}>
+            <span style={{fontSize: 18, color: "#6f7368"}}>X 坐标:</span>
+            <b style={{fontSize: 20, color: "#26332e"}}>{xValue}</b>
           </div>
-          <div style={{display: "flex", justifyContent: "space-between"}}>
-            <span>Y 坐标:</span>
-            <b style={{color: "#26332e"}}>{yValue}</b>
+          <div style={{display: "flex", justifyContent: "space-between", height: 32, alignItems: "center"}}>
+            <span style={{fontSize: 18, color: "#6f7368"}}>Y 坐标:</span>
+            <b style={{fontSize: 20, color: "#26332e"}}>{yValue}</b>
           </div>
         </div>
         <div
           style={{
             fontFamily: MONO_STACK,
-            fontSize: 12,
+            fontSize: 15,
             color: "#8a8b80",
             marginTop: 18,
             opacity: interpolate(revealProgress, [0.7, 1], [0, 1], clamp),
@@ -550,22 +576,77 @@ const MathEngine: React.FC<{frame: number; mode: "money" | "projection"}> = ({fr
   const pulse = interpolate(Math.sin(frame / 18), [-1, 1], [0.16, 0.28]);
 
   return (
-    <div style={{position: "absolute", left: 820, top: 492, width: 280, height: 220, textAlign: "center"}}>
-      <svg width="280" height="150" viewBox="0 0 280 150" style={{overflow: "visible"}}>
+    <div style={{position: "absolute", left: 0, top: 0, width: 280, height: 220, textAlign: "center"}}>
+      <svg width="280" height="220" viewBox="0 0 280 220" style={{overflow: "visible"}}>
+        {/* Outermost glowing thin circle with nodes */}
         <circle
           cx="140"
-          cy="70"
-          r="64"
+          cy="110"
+          r="92"
+          fill="none"
+          stroke="rgba(167, 119, 72, 0.15)"
+          strokeWidth="1.5"
+        />
+        <circle cx="140" cy="18" r="4" fill="#a77748" />
+        <circle cx="140" cy="202" r="4" fill="#a77748" />
+        <circle cx="48" cy="110" r="4" fill="#a77748" />
+        <circle cx="232" cy="110" r="4" fill="#a77748" />
+
+        {/* Rotating gear/dashed ring */}
+        <circle
+          cx="140"
+          cy="110"
+          r="74"
           fill={`rgba(167, 119, 72, ${pulse})`}
           stroke="#a77748"
           strokeWidth="2"
-          strokeDasharray="8 8"
-          transform={`rotate(${spin} 140 70)`}
+          strokeDasharray="12 12"
+          transform={`rotate(${spin} 140 110)`}
         />
-        <circle cx="140" cy="70" r="38" fill="rgba(255, 252, 244, 0.88)" stroke="rgba(167,119,72,0.34)" />
-        <path d="M120 70 H160 M140 50 V90" stroke="#a77748" strokeWidth="4" strokeLinecap="round" opacity="0.75" />
+
+        {/* Inner coordinate axes rotating in opposite direction */}
+        <g transform={`rotate(${-spin * 0.5} 140 110)`} opacity="0.6">
+          <line x1="100" y1="110" x2="180" y2="110" stroke="#a77748" strokeWidth="1.5" strokeDasharray="4 4" />
+          <line x1="140" y1="70" x2="140" y2="150" stroke="#a77748" strokeWidth="1.5" strokeDasharray="4 4" />
+          <circle cx="140" cy="110" r="42" fill="none" stroke="#a77748" strokeWidth="1" strokeDasharray="3 3" />
+        </g>
+
+        {/* Core pulsing circle */}
+        <circle
+          cx="140"
+          cy="110"
+          r={32 + 3 * Math.sin(frame / 10)}
+          fill="rgba(255, 252, 244, 0.95)"
+          stroke="rgba(167,119,72,0.6)"
+          strokeWidth="2"
+        />
+
+        {/* Dynamic mathematical floating symbols */}
+        <g style={{ fontFamily: MONO_STACK, fontSize: 13, fontWeight: "bold", fill: "rgba(167, 119, 72, 0.65)" }}>
+          <text
+            x={140 + 72 * Math.cos(frame * 0.015 + 0.4)}
+            y={110 + 72 * Math.sin(frame * 0.015 + 0.4)}
+            textAnchor="middle"
+          >
+            f(x)
+          </text>
+          <text
+            x={140 + 64 * Math.cos(frame * 0.012 + 2.5)}
+            y={110 + 64 * Math.sin(frame * 0.012 + 2.5)}
+            textAnchor="middle"
+          >
+            ∑
+          </text>
+          <text
+            x={140 + 76 * Math.cos(-frame * 0.01 + 4.8)}
+            y={110 + 76 * Math.sin(-frame * 0.01 + 4.8)}
+            textAnchor="middle"
+          >
+            dx
+          </text>
+        </g>
       </svg>
-      <div style={{fontFamily: MONO_STACK, color: "#a77748", fontSize: 13, fontWeight: 800}}>
+      <div style={{fontFamily: MONO_STACK, color: "#a77748", fontSize: 15, fontWeight: 800, marginTop: 12}}>
         {mode === "money" ? "汇率换算公式" : "投影转换公式"}
       </div>
       <div style={{fontSize: 24, color: "#29342f", fontWeight: 700, marginTop: 8}}>
@@ -580,31 +661,75 @@ const Packet: React.FC<{
   opacity: number;
   label: string;
   color: string;
-}> = ({progress, opacity, label, color}) => (
-  <div
-    style={{
-      position: "absolute",
-      left: interpolate(progress, [0, 1], [620, 1200]),
-      top: 578,
-      width: 132,
-      height: 46,
-      transform: `translate(-50%, -50%) rotate(${interpolate(progress, [0, 1], [-5, 5])}deg)`,
-      opacity,
-      background: color,
-      color: "#fffdf6",
-      fontFamily: MONO_STACK,
-      fontSize: 13,
-      fontWeight: 800,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      boxShadow: "0 16px 36px rgba(55, 48, 38, 0.20)",
-      zIndex: 40,
-    }}
-  >
-    {label}
-  </div>
-);
+}> = ({progress, opacity, label, color}) => {
+  const startX = 620;
+  const endX = 1300;
+  const currentX = interpolate(progress, [0, 1], [startX, endX]);
+  const currentY = 550;
+
+  const tail1X = interpolate(Math.max(0, progress - 0.04), [0, 1], [startX, endX]);
+  const tail2X = interpolate(Math.max(0, progress - 0.08), [0, 1], [startX, endX]);
+
+  return (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          left: tail2X,
+          top: currentY,
+          width: 24,
+          height: 24,
+          borderRadius: "50%",
+          background: color,
+          opacity: opacity * 0.28,
+          transform: "translate(-50%, -50%)",
+          pointerEvents: "none",
+          zIndex: 38,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          left: tail1X,
+          top: currentY,
+          width: 32,
+          height: 32,
+          borderRadius: "50%",
+          background: color,
+          opacity: opacity * 0.52,
+          transform: "translate(-50%, -50%)",
+          pointerEvents: "none",
+          zIndex: 39,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          left: currentX,
+          top: currentY,
+          width: 140,
+          height: 52,
+          transform: `translate(-50%, -50%) rotate(${interpolate(progress, [0, 1], [-6, 6])}deg)`,
+          opacity,
+          background: color,
+          border: "2px solid rgba(255,255,255,0.75)",
+          borderRadius: 999,
+          color: "#fffdf6",
+          fontFamily: MONO_STACK,
+          fontSize: 16,
+          fontWeight: 800,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: `0 12px 30px ${color}40`,
+          zIndex: 40,
+        }}
+      >
+        {label}
+      </div>
+    </>
+  );
+};
 
 export const GISComparison: React.FC = () => {
   const {fps: videoFps} = useVideoConfig();
@@ -856,52 +981,98 @@ export const GISComparison: React.FC = () => {
               transform: `translateY(${interpolate(cardEntry, [0, 1], [52, 0])}px)`,
             }}
           >
-            <svg width="1920" height="1080" viewBox="0 0 1920 1080" style={{position: "absolute", inset: 0}}>
-              <path d="M620 602 C 744 560, 830 560, 960 602 S 1180 644, 1300 602" fill="none" stroke="rgba(167,119,72,0.45)" strokeWidth="2" strokeDasharray="8 8" />
-              <path d="M620 622 C 744 664, 830 664, 960 622 S 1180 580, 1300 622" fill="none" stroke="rgba(49,95,109,0.26)" strokeWidth="2" strokeDasharray="8 8" />
+            <svg width="1920" height="1080" viewBox="0 0 1920 1080" style={{position: "absolute", inset: 0, overflow: "visible"}}>
+              <path
+                d="M620 540 C 740 490, 840 490, 960 540 S 1180 590, 1300 540"
+                fill="none"
+                stroke="rgba(167,119,72,0.45)"
+                strokeWidth="3"
+                strokeDasharray="8 8"
+                strokeDashoffset={-frame * 1.5}
+              />
+              <path
+                d="M620 560 C 740 610, 840 610, 960 560 S 1180 510, 1300 560"
+                fill="none"
+                stroke="rgba(49,95,109,0.36)"
+                strokeWidth="3"
+                strokeDasharray="8 8"
+                strokeDashoffset={frame * 1.5}
+              />
             </svg>
 
-            <ProjectCard
-              x={interpolate(sourceCardIn, [0, 1], [430, 200])}
-              y={430}
-              tone="source"
-              title="源坐标系：WGS 84 地理坐标系"
-              status="原始值"
-              value="100"
-              valueUnit="$"
-              xValue="121.000°"
-              yValue="31.000°"
-              footer="经纬度单位：度 (Degree)"
-              opacity={interpolate(sourceCardIn, [0, 1], [0, 1])}
-              scale={interpolate(sourceCardIn, [0, 1], [1.08, 1])}
-              revealProgress={sourceReveal}
-            />
-
-            <div
+            {/* Source Card Float Wrapper */}
+            <Float
+              speed={56}
+              amplitude={8}
+              rotateAmplitude={0.4}
+              delay={10}
               style={{
+                position: "absolute",
+                left: interpolate(sourceCardIn, [0, 1], [430, 180]),
+                top: 380,
+                opacity: interpolate(sourceCardIn, [0, 1], [0, 1]),
+              }}
+            >
+              <ProjectCard
+                x={0}
+                y={0}
+                tone="source"
+                title="源坐标系：WGS 84 地理坐标系"
+                status="原始值"
+                value="100"
+                valueUnit="$"
+                xValue="121.000°"
+                yValue="31.000°"
+                footer="经纬度单位：度 (Degree)"
+                scale={interpolate(sourceCardIn, [0, 1], [1.08, 1])}
+                revealProgress={sourceReveal}
+              />
+            </Float>
+
+            {/* Math Engine Float Wrapper */}
+            <Float
+              speed={60}
+              amplitude={6}
+              rotateAmplitude={0.2}
+              delay={20}
+              style={{
+                position: "absolute",
+                left: 820,
+                top: 440,
                 opacity: interpolate(engineIn, [0, 1], [0, 1]),
-                transform: `scale(${interpolate(engineIn, [0, 1], [0.82, 1])})`,
-                transformOrigin: "960px 602px",
               }}
             >
               <MathEngine frame={frame} mode={engineMode} />
-            </div>
+            </Float>
 
-            <ProjectCard
-              x={interpolate(targetCardIn, [0, 1], [1040, 1300])}
-              y={430}
-              tone="target"
-              title={targetName}
-              status="重新写入"
-              value={String(displayCNY)}
-              valueUnit="¥"
-              xValue={finalX.toLocaleString()}
-              yValue={finalY.toLocaleString()}
-              footer={frame < 2960 ? "平面单位：米 (m)" : "平面单位：米 (m)，带号写入"}
-              opacity={interpolate(targetCardIn, [0, 1], [0, 1])}
-              scale={interpolate(targetCardIn, [0, 1], [1.08, 1])}
-              revealProgress={targetReveal}
-            />
+            {/* Target Card Float Wrapper */}
+            <Float
+              speed={64}
+              amplitude={8}
+              rotateAmplitude={-0.4}
+              delay={35}
+              style={{
+                position: "absolute",
+                left: interpolate(targetCardIn, [0, 1], [1050, 1300]),
+                top: 380,
+                opacity: interpolate(targetCardIn, [0, 1], [0, 1]),
+              }}
+            >
+              <ProjectCard
+                x={0}
+                y={0}
+                tone="target"
+                title={targetName}
+                status="重新写入"
+                value={String(displayCNY)}
+                valueUnit="¥"
+                xValue={finalX.toLocaleString()}
+                yValue={finalY.toLocaleString()}
+                footer={frame < 2960 ? "平面单位：米 (m)" : "平面单位：米 (m)，带号写入"}
+                scale={interpolate(targetCardIn, [0, 1], [1.08, 1])}
+                revealProgress={targetReveal}
+              />
+            </Float>
 
             {frame >= 1990 && frame <= 2242 && (
               <Packet progress={packetMoneyProgress} opacity={packetMoneyOpacity} label="$100" color="#4f745d" />
@@ -916,14 +1087,14 @@ export const GISComparison: React.FC = () => {
               position: "absolute",
               left: "50%",
               bottom: 82,
-              width: 1180,
+              width: 1240,
               transform: "translateX(-50%)",
-              background: "rgba(255, 252, 244, 0.88)",
-              border: "1px solid rgba(47, 55, 49, 0.14)",
-              boxShadow: "0 24px 70px rgba(55, 48, 38, 0.12)",
+              background: "rgba(255, 252, 244, 0.90)",
+              border: "1.5px solid rgba(47, 55, 49, 0.18)",
+              boxShadow: "0 24px 70px rgba(55, 48, 38, 0.14)",
               padding: "24px 34px",
               textAlign: "center",
-              fontSize: 25,
+              fontSize: 32,
               lineHeight: 1.55,
               color: "#29342f",
               fontWeight: 700,
