@@ -34,7 +34,7 @@ const Float: React.FC<{
 }> = ({ children, speed = 60, amplitude = 6, delay = 0, style }) => {
   const frame = useCurrentFrame();
   const t = frame + delay;
-  const y = Math.round(Math.sin(t / speed) * amplitude);
+  const y = Math.sin(t / speed) * amplitude;
   return (
     <div
       style={{
@@ -490,7 +490,7 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x={Math.round(288 + tagShiftX)}
+              x={288 + tagShiftX}
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
@@ -541,7 +541,7 @@ const DefineProjectPanel: React.FC = () => {
             />
             {/* Right coordinate text - fading & sliding in */}
             <text
-              x={Math.round(260 + shiftX)}
+              x={260 + shiftX}
               y="32"
               textAnchor="middle"
               fontFamily={MONO_STACK}
